@@ -556,7 +556,7 @@
         // --- FUNGSI SUPER ADMIN (PAPAN PEMUKA UTAMA) ---
         window.logMasukSuperAdmin = () => {
             let pwd = prompt("Sila masukkan kata laluan admin (Demo: admin123):");
-            if (pwd === "admin123") {
+            if (pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 muatSenaraiPengguna();
             } else if (pwd !== null) {
@@ -600,22 +600,28 @@
                 container.innerHTML = count > 0 ? htmlStr : '<p style="color:rgba(255,255,255,0.5);">Tiada pendaftaran setakat ini.</p>';
             } catch (e) {
                 console.error("Ralat muat senarai:", e);
-                container.innerHTML = `<p style="color: #ff3b30;">Gagal memuat turun data dari Firestore. (Rules Error / Belum Setup)</p>`;
                 
-                if (currentUserInfo && currentUserInfo.uid === 'demo_user_123') {
-                    totalEl.innerText = "1 (Mod Demo)";
-                    container.innerHTML = `
-                        <div class="admin-user-item">
-                            <div>
-                                <strong>Pengguna Demo</strong><br>
-                                <small>ID: demo_user_123</small>
-                            </div>
-                            <button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                }
+                // --- PENAMBAHBAIKAN: UI Ralat & Data Demo ---
+                totalEl.innerText = "3 (Mod Demo)";
+                container.innerHTML = `
+                    <div style="background: rgba(255, 59, 48, 0.2); border-left: 4px solid #ff3b30; padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 0.85rem;">
+                        <i class="fa-solid fa-triangle-exclamation"></i> <strong>Akses Pangkalan Data Disekat</strong><br>
+                        Untuk memaparkan data pengguna sebenar, sila kemas kini <em>Firestore Rules</em> anda kepada:<br>
+                        <code>allow read: if true;</code>
+                    </div>
+                    <div class="admin-user-item">
+                        <div><strong>Ahmad (Demo)</strong><br><small>ID: demo_ahmad_123</small></div>
+                        <button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div class="admin-user-item">
+                        <div><strong>Siti (Demo)</strong><br><small>ID: demo_siti_456</small></div>
+                        <button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div class="admin-user-item">
+                        <div><strong>Ali (Demo)</strong><br><small>ID: demo_ali_789</small></div>
+                        <button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
             }
         }
 
