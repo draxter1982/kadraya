@@ -346,8 +346,8 @@
         </div>
 
         <header class="header-kad" style="margin-top: 15px;">
-            <h1>Selamat Hari Raya Aidilfitri</h1>
-            <div class="script-text">Maaf Zahir & Batin 1447H</div>
+            <h1 id="display-tajuk-utama">Selamat Hari Raya Aidilfitri</h1>
+            <div class="script-text" id="display-sub-tajuk">Maaf Zahir & Batin 1447H</div>
             <p>Ikhlas daripada <strong id="display-nama">...</strong></p>
         </header>
 
@@ -414,12 +414,28 @@
             <!-- Kumpulan 1: Profil & Pengenalan -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-user"></i> Profil & Pengenalan</h3>
+                <div class="form-group"><label>Tajuk Utama</label><input type="text" id="admin-tajuk-utama" placeholder="Cth: Selamat Hari Raya Aidilfitri"></div>
+                <div class="form-group"><label>Sub Tajuk</label><input type="text" id="admin-sub-tajuk" placeholder="Cth: Maaf Zahir & Batin 1447H"></div>
                 <div class="form-group"><label>Nama Pengirim</label><input type="text" id="admin-nama"></div>
                 <div class="form-group"><label>Ucapan Pengenalan</label><textarea id="admin-intro" style="min-height: 60px;"></textarea></div>
                 <div class="form-group"><label>URL Video MP4 (Pilihan)</label><input type="text" id="admin-video" placeholder="Kosongkan jika tiada"></div>
             </div>
 
-            <!-- Kumpulan 2: Gambar Album / Tab -->
+            <!-- Kumpulan 2: Tetapan Pautan (Custom URL) -->
+            <div class="admin-group">
+                <h3><i class="fa-solid fa-link"></i> Tetapan Pautan Kongsi</h3>
+                <div class="form-group">
+                    <label>ID Pautan Unik (Satu Perkataan)</label>
+                    <div style="display:flex; align-items:center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 0 10px;">
+                        <span style="color: #aaa; font-size: 0.8rem; white-space: nowrap;">.../?id=</span>
+                        <!-- Javascript oninput untuk elak penggunaan simbol/jarak -->
+                        <input type="text" id="admin-custom-url" placeholder="cth: keluarga-zahidi" style="border:none; border-bottom:none; border-radius:0; padding:15px 5px; background: transparent; width:100%;" oninput="this.value = this.value.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase()">
+                    </div>
+                    <small style="color: #888; font-size: 0.7rem; display: block; margin-top: 5px;">Hanya huruf, nombor dan sengkang (-) dibenarkan.</small>
+                </div>
+            </div>
+
+            <!-- Kumpulan 3: Gambar Album / Tab -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-images"></i> Gambar Album (Tab 1-5)</h3>
                 <div class="form-group"><label>URL Gambar Tab 1 (Famili)</label><input type="text" id="admin-gambar-1"></div>
@@ -429,7 +445,7 @@
                 <div class="form-group"><label>URL Gambar Tab 5</label><input type="text" id="admin-gambar-5"></div>
             </div>
 
-            <!-- Kumpulan 3: Duit Raya QR -->
+            <!-- Kumpulan 4: Duit Raya QR -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-wallet"></i> Duit Raya (QR)</h3>
                 <div class="form-group"><label>Teks Atas QR (Boleh Edit)</label><input type="text" id="admin-qr-text" placeholder="Contoh: Imbas untuk Duit Raya"></div>
@@ -465,7 +481,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        // Tambah import untuk ciri carian query / where Custom URL
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBNoZ0Kie6WD-jGpHRMcnLOiEYd4rV4wr0",
@@ -488,6 +505,9 @@
         let viewingSharedId = null;
 
         const defaultData = {
+            tajukUtama: 'Selamat Hari Raya Aidilfitri',
+            subTajuk: 'Maaf Zahir & Batin 1447H',
+            customUrl: '',
             nama: 'Zahidi',
             tema: 'tema1', 
             intro: 'Semoga Syawal ini membawa seribu rahmat, kebahagiaan, dan kemakmuran kepada kita semua.',
@@ -512,7 +532,6 @@
 
         if (sharedId) {
             isGuestMode = true;
-            viewingSharedId = sharedId;
             muatKadTetamu(sharedId);
         } else {
             // Jalankan sistem pengesahan biasa jika tiada pautan "Share"
@@ -534,27 +553,47 @@
         }
 
         // --- FUNGSI TETAMU (MELIHAT PAUTAN KONGSI) ---
-        async function muatKadTetamu(uid) {
+        async function muatKadTetamu(uid_or_customUrl) {
             paparHalaman('page-loading');
             try {
-                const docRef = doc(db, "users_kad_raya", uid);
-                const docSnap = await getDoc(docRef);
+                // CUBAAN PERTAMA: Semak adakah parameter adalah UID sebenar Firestore
+                const docRef = doc(db, "users_kad_raya", uid_or_customUrl);
+                let docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     kadData = docSnap.data();
-                    if(!kadData.tema) kadData.tema = 'tema1';
-                    if(!kadData.qrText) kadData.qrText = defaultData.qrText;
-                    
-                    // Sembunyikan kawalan pemilik (Butang Kembali & Tetapan Admin)
-                    document.getElementById('nav-owner-controls').style.display = 'none';
-                    
-                    window.terapkanTema(kadData.tema);
-                    muatUIEditorKad();
-                    paparHalaman('page-kad');
+                    viewingSharedId = uid_or_customUrl;
                 } else {
-                    alert("Maaf, pautan kad ini tidak sah atau telah dipadam.");
-                    window.location.href = window.location.href.split('?')[0]; // Buang parameter id dan kembali ke asal
+                    // CUBAAN KEDUA: Jika bukan UID, ia mungkin URL Tersuai (Custom URL)
+                    // Cari pengguna yang mempunyai 'customUrl' ini
+                    const q = query(collection(db, "users_kad_raya"), where("customUrl", "==", uid_or_customUrl));
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (!querySnapshot.empty) {
+                        let foundDoc = querySnapshot.docs[0];
+                        kadData = foundDoc.data();
+                        viewingSharedId = foundDoc.id; // Simpan ID sebenar untuk membolehkan Guest hantar mesej
+                    } else {
+                        // Gagal cari di kedua-dua bahagian
+                        alert("Maaf, pautan kad ini tidak sah atau telah dipadam.");
+                        window.location.href = window.location.href.split('?')[0]; 
+                        return;
+                    }
                 }
+
+                // Teruskan memuatkan data kad
+                if(!kadData.tema) kadData.tema = 'tema1';
+                if(!kadData.qrText) kadData.qrText = defaultData.qrText;
+                if(!kadData.tajukUtama) kadData.tajukUtama = defaultData.tajukUtama;
+                if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
+                
+                // Sembunyikan kawalan pemilik (Butang Kembali & Tetapan Admin)
+                document.getElementById('nav-owner-controls').style.display = 'none';
+                
+                window.terapkanTema(kadData.tema);
+                muatUIEditorKad();
+                paparHalaman('page-kad');
+                
             } catch (e) {
                 console.error("Ralat muat kad tetamu:", e);
                 alert("Gagal memuatkan kad. Sila pastikan sambungan internet anda stabil.");
@@ -577,17 +616,16 @@
         }
 
         window.kongsiKad = () => {
-            // Jika ia adalah akaun demo
-            let targetUid = (currentUserInfo && currentUserInfo.uid) ? currentUserInfo.uid : 'demo_user_123';
+            // Gunakan custom URL jika ada, jika tiada gunakan UID asli
+            let targetId = (kadData.customUrl && kadData.customUrl.trim() !== '') ? kadData.customUrl : ((currentUserInfo && currentUserInfo.uid) ? currentUserInfo.uid : 'demo_user_123');
             
-            // Bina pautan penuh laman web + parameter '?id='
-            const shareUrl = window.location.href.split('?')[0] + "?id=" + targetUid;
+            // Bina pautan penuh
+            const shareUrl = window.location.href.split('?')[0] + "?id=" + targetId;
 
-            // Salin ke Clipboard (Papan Keratan)
+            // Salin ke Clipboard
             navigator.clipboard.writeText(shareUrl).then(() => {
                 alert("Berjaya Disalin!\n\nPautan unik kad anda telah disalin ke papan keratan (clipboard). Sila paste ke WhatsApp atau media sosial rakan anda.\n\nPautan:\n" + shareUrl);
             }).catch(err => {
-                // Fallback jika pelayar web menyekat fungsi salinan automatik
                 prompt("Sila salin (copy) pautan ini untuk dikongsi dengan rakan-rakan:", shareUrl);
             });
         };
@@ -669,7 +707,8 @@
                     count++;
                     let data = docSnap.data();
                     let uid = docSnap.id;
-                    htmlStr += `<div class="admin-user-item"><div><strong>${data.nama || 'Tiada Nama'}</strong><br><small>ID: ${uid.substring(0, 10)}...</small></div><button class="btn-delete" onclick="padamPenggunaData('${uid}')" title="Padam Data"><i class="fa-solid fa-trash"></i></button></div>`;
+                    let pautanText = data.customUrl ? `Pautan: ${data.customUrl}` : `ID: ${uid.substring(0, 10)}...`;
+                    htmlStr += `<div class="admin-user-item"><div><strong>${data.nama || 'Tiada Nama'}</strong><br><small>${pautanText}</small></div><button class="btn-delete" onclick="padamPenggunaData('${uid}')" title="Padam Data"><i class="fa-solid fa-trash"></i></button></div>`;
                 });
                 totalEl.innerText = count;
                 container.innerHTML = count > 0 ? htmlStr : '<p style="color:rgba(255,255,255,0.5);">Tiada pendaftaran setakat ini.</p>';
@@ -729,6 +768,8 @@
                     kadData = docSnap.data();
                     if(!kadData.tema) kadData.tema = 'tema1';
                     if(!kadData.qrText) kadData.qrText = defaultData.qrText;
+                    if(!kadData.tajukUtama) kadData.tajukUtama = defaultData.tajukUtama;
+                    if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
                 } else {
                     kadData = { ...defaultData, nama: currentUserInfo.displayName || 'Pengguna' };
                     await setDoc(docRef, kadData);
@@ -745,13 +786,21 @@
         }
 
         window.simpanAdminKeFirebase = async () => {
+            kadData.tajukUtama = document.getElementById('admin-tajuk-utama').value || defaultData.tajukUtama;
+            kadData.subTajuk = document.getElementById('admin-sub-tajuk').value || defaultData.subTajuk;
             kadData.nama = document.getElementById('admin-nama').value;
+            kadData.intro = document.getElementById('admin-intro').value;
+            kadData.video = document.getElementById('admin-video').value;
+            
+            // Sanitize custom URL supaya takde space/simbol pelik
+            let cUrl = document.getElementById('admin-custom-url').value;
+            kadData.customUrl = cUrl ? cUrl.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase() : '';
+            
             kadData.gambarTabs = [];
             for(let i=1; i<=5; i++) kadData.gambarTabs.push(document.getElementById('admin-gambar-'+i).value);
-            kadData.video = document.getElementById('admin-video').value;
+            
             kadData.qrText = document.getElementById('admin-qr-text').value || defaultData.qrText;
             kadData.qrCode = document.getElementById('admin-qr').value || defaultData.qrCode;
-            kadData.intro = document.getElementById('admin-intro').value;
 
             if (currentUserInfo && currentUserInfo.uid === 'demo_user_123') {
                 alert("Simulasi Berjaya: Tetapan disimpan sementara.");
@@ -783,8 +832,6 @@
 
             // Jika dalam Guest Mode (melawat pautan) atau Demo Mode
             if (isGuestMode || (currentUserInfo && currentUserInfo.uid === 'demo_user_123')) {
-                // Dalam situasi sebenar, rule Firebase perlu "allow update: if true;" untuk bahagian ucapanList
-                // Buat masa ini kita memaparkan ia berhasil di antaramuka (UI) untuk pelawat
                 try {
                     let targetUid = isGuestMode ? viewingSharedId : currentUserInfo.uid;
                     if(targetUid !== 'demo_user_123') {
@@ -795,7 +842,6 @@
                     alert("Ucapan anda berjaya ditinggalkan!");
                 } catch(e) {
                     console.error("Gagal simpan ke DB", e);
-                    // Fallback visual UI
                     updateUI();
                     alert("Ucapan berjaya ditunjuk di skrin anda! (Nota: Gagal disimpan ke awan kerana had 'Firebase Rules' untuk tetamu awam).");
                 }
@@ -812,6 +858,8 @@
 
         // --- FUNGSI ANTARAMUKA (UI) ---
         function muatUIEditorKad() {
+            document.getElementById('display-tajuk-utama').innerText = kadData.tajukUtama || defaultData.tajukUtama;
+            document.getElementById('display-sub-tajuk').innerText = kadData.subTajuk || defaultData.subTajuk;
             document.getElementById('display-nama').innerText = kadData.nama;
             document.getElementById('display-intro').innerText = kadData.intro;
             
@@ -882,9 +930,12 @@
         };
 
         window.bukaAdmin = () => {
+            document.getElementById('admin-tajuk-utama').value = kadData.tajukUtama || defaultData.tajukUtama;
+            document.getElementById('admin-sub-tajuk').value = kadData.subTajuk || defaultData.subTajuk;
             document.getElementById('admin-nama').value = kadData.nama;
             document.getElementById('admin-intro').value = kadData.intro || '';
             document.getElementById('admin-video').value = kadData.video || '';
+            document.getElementById('admin-custom-url').value = kadData.customUrl || '';
             
             for(let i=1; i<=5; i++) document.getElementById('admin-gambar-'+i).value = kadData.gambarTabs[i-1] || '';
             
