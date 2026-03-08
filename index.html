@@ -405,18 +405,45 @@
                 paparHalaman('page-loading');
                 await signInWithPopup(auth, provider);
             } catch (error) {
-                console.error("Ralat Log Masuk:", error);
-                alert("Ralat log masuk: " + error.message);
-                paparHalaman('page-login');
+                console.error("Ralat Log Masuk Firebase:", error);
+                
+                // Mesej ralat khas untuk memberi panduan kepada pengguna
+                let errorMsg = "Ralat Log Masuk: " + error.message;
+                if (error.code === 'auth/invalid-action-code' || error.message.includes('invalid') || error.message.includes('unauthorized')) {
+                    errorMsg += "\n\n💡 TIPS: Pastikan anda telah:\n1. Mengaktifkan 'Google' di Firebase Console > Authentication > Sign-in method.\n2. Menetapkan 'Support email' dalam tetapan tersebut.\n3. Menambah domain StackBlitz/web ini dalam senarai 'Authorized domains'.";
+                }
+                
+                alert(errorMsg);
+                
+                // Fallback / Laluan selamat untuk teruskan testing UI jika Firebase gagal
+                let teruskan = confirm("Adakah anda ingin log masuk menggunakan akaun Demo (Mock Login) untuk melihat antaramuka sementara membaiki ralat Firebase?");
+                if(teruskan) {
+                    currentUserInfo = { uid: 'demo_user_123', displayName: 'Pengguna Demo' };
+                    document.getElementById('dash-nama-user').innerText = currentUserInfo.displayName;
+                    
+                    // Guna data lalai (default) sebab kita tiada akses pangkalan data sebenar
+                    kadData = { ...defaultData, nama: currentUserInfo.displayName }; 
+                    paparHalaman('page-dashboard');
+                } else {
+                    paparHalaman('page-login');
+                }
             }
         };
 
         window.logKeluarFirebase = async () => {
             try {
                 paparHalaman('page-loading');
-                await signOut(auth);
+                if (currentUserInfo && currentUserInfo.uid === 'demo_user_123') {
+                    // Kalau guna akaun demo, terus keluar tanpa call Firebase
+                    currentUserInfo = null;
+                    kadData = null;
+                    paparHalaman('page-login');
+                } else {
+                    await signOut(auth);
+                }
             } catch (error) {
                 console.error("Ralat Log Keluar:", error);
+                paparHalaman('page-dashboard'); // Patah balik jika ralat
             }
         };
 
@@ -428,9 +455,12 @@
                 await muatDataDariFirestore(user.uid);
                 paparHalaman('page-dashboard');
             } else {
-                currentUserInfo = null;
-                kadData = null;
-                paparHalaman('page-login');
+                // Jangan reset kalau user tengah guna Mock Login ('demo_user_123')
+                if (!currentUserInfo || currentUserInfo.uid !== 'demo_user_123') {
+                    currentUserInfo = null;
+                    kadData = null;
+                    paparHalaman('page-login');
+                }
             }
         });
 
@@ -448,7 +478,7 @@
                     await setDoc(docRef, kadData);
                 }
             } catch (e) {
-                console.error("Ralat memuat data, sila pastikan Firestore telah diaktifkan di konsol Firebase.", e);
+                console.error("Ralat memuat data Firestore:", e);
                 alert("Pangkalan data (Firestore) belum diaktifkan/mempunyai ralat rules. Menggunakan data memori sementara.");
                 kadData = { ...defaultData, nama: currentUserInfo.displayName }; // Fallback selamat
             }
@@ -462,6 +492,14 @@
             kadData.video = document.getElementById('admin-video').value;
             kadData.qrCode = document.getElementById('admin-qr').value || defaultData.qrCode;
             kadData.intro = document.getElementById('admin-intro').value;
+
+            // Jika guna akaun Demo, simpan ke memori sementara sahaja
+            if (currentUserInfo.uid === 'demo_user_123') {
+                alert("Simulasi Berjaya: Tetapan disimpan sementara (kerana anda menggunakan Mod Demo).");
+                muatUIEditorKad();
+                window.tutupAdmin();
+                return;
+            }
 
             try {
                 const docRef = doc(db, "users_kad_raya", currentUserInfo.uid);
@@ -483,16 +521,25 @@
             // Tambah di atas senarai
             kadData.ucapanList.unshift({ nama: nama, mesej: mesej });
             
-            try {
-                const docRef = doc(db, "users_kad_raya", currentUserInfo.uid);
-                await setDoc(docRef, { ucapanList: kadData.ucapanList }, { merge: true });
-                
+            let updateUI = () => {
                 document.getElementById('input-nama-ucapan').value = ''; 
                 document.getElementById('input-teks-ucapan').value = '';
                 
                 let container = document.getElementById('senarai-ucapan');
                 container.style.opacity = '0'; 
                 setTimeout(() => { paparSenaraiUcapan(); container.style.opacity = '1'; }, 300);
+            };
+
+            // Jika guna akaun Demo, kemas kini UI sahaja tanpa simpan ke DB
+            if (currentUserInfo.uid === 'demo_user_123') {
+                updateUI();
+                return;
+            }
+            
+            try {
+                const docRef = doc(db, "users_kad_raya", currentUserInfo.uid);
+                await setDoc(docRef, { ucapanList: kadData.ucapanList }, { merge: true });
+                updateUI();
             } catch (e) {
                 console.error("Ralat hantar ucapan:", e);
                 alert("Gagal hantar ucapan ke pangkalan data.");
