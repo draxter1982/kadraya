@@ -604,23 +604,26 @@
 
         // --- SISTEM AUTOPLAY MUZIK (Dengan User Interaction) ---
         let muzikBermula = false;
+        let penggunaHentiMuzik = false; // Penanda untuk elak Autoplay jika pengguna sengaja tutup muzik
+
         function cubaMainkanMuzikLatar() {
-            if (!muzikBermula && document.getElementById('page-kad').classList.contains('active')) {
+            // Hanya autoplay jika belum mula DAN pengguna tak pernah tekan stop
+            if (!muzikBermula && !penggunaHentiMuzik && document.getElementById('page-kad').classList.contains('active')) {
                 let audioEl = document.getElementById("laguRaya");
                 if (audioEl.paused) {
                     audioEl.play().then(() => {
                         muzikBermula = true;
-                        document.getElementById("btn-muzik").classList.add('active');
-                        document.getElementById("ikon-muzik").classList.add('fa-spin');
+                        let btnMuzik = document.getElementById("btn-muzik");
+                        let ikonMuzik = document.getElementById("ikon-muzik");
+                        if(btnMuzik) btnMuzik.classList.add('active');
+                        if(ikonMuzik) ikonMuzik.classList.add('fa-spin');
                     }).catch(err => {
                         console.log("Autoplay dihalang oleh pelayar:", err);
-                        // Tunggu klik seterusnya jika gagal
                     });
                 }
             }
         }
 
-        // Dengar sebarang interaksi pengguna untuk mula muzik (keperluan pelayar moden)
         document.body.addEventListener('click', cubaMainkanMuzikLatar);
         document.body.addEventListener('touchstart', cubaMainkanMuzikLatar);
 
@@ -736,16 +739,17 @@
                 bottomNav.classList.remove('active');
                 document.getElementById('display-video').pause();
                 
-                // Jeda muzik juga bila keluar dari kad
+                // Jeda muzik juga bila keluar dari kad dan reset penanda autoplay
                 let audioEl = document.getElementById("laguRaya");
                 let btnMuzik = document.getElementById("btn-muzik");
                 let ikonMuzik = document.getElementById("ikon-muzik");
                 if (!audioEl.paused) {
                     audioEl.pause();
-                    muzikBermula = false;
-                    if(btnMuzik) btnMuzik.classList.remove('active');
-                    if(ikonMuzik) ikonMuzik.classList.remove('fa-spin');
                 }
+                muzikBermula = false;
+                penggunaHentiMuzik = false; // Reset supaya ia akan autoplay jika masuk balik
+                if(btnMuzik) btnMuzik.classList.remove('active');
+                if(ikonMuzik) ikonMuzik.classList.remove('fa-spin');
             }
         }
 
@@ -814,7 +818,7 @@
 
         // --- FUNGSI SUPER ADMIN ---
         window.logMasukSuperAdmin = () => {
-            let pwd = prompt("Sila masukkan kata laluan admin :");
+            let pwd = prompt("Sila masukkan kata laluan admin ");
             if (pwd === "draxter1982" || pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 muatSenaraiPengguna();
@@ -1076,7 +1080,7 @@
             }
             
             audioEl.load(); 
-            if (isPlaying) {
+            if (isPlaying && !penggunaHentiMuzik) {
                 audioEl.play().catch(e => console.log("Perlu interaksi untuk main:", e));
             }
 
@@ -1190,20 +1194,29 @@
         };
 
         window.toggleMuzikLatar = () => {
-            var audio = document.getElementById("laguRaya"); var btnMuzik = document.getElementById("btn-muzik"); var ikonMuzik = document.getElementById("ikon-muzik");
-            ikonMuzik.style.transform = 'scale(0.7)'; setTimeout(() => ikonMuzik.style.transform = '', 200);
+            var audio = document.getElementById("laguRaya"); 
+            var btnMuzik = document.getElementById("btn-muzik"); 
+            var ikonMuzik = document.getElementById("ikon-muzik");
+            
+            ikonMuzik.style.transform = 'scale(0.7)'; 
+            setTimeout(() => ikonMuzik.style.transform = '', 200);
+            
             if (audio.paused) { 
                 audio.play().then(() => {
                     muzikBermula = true;
+                    penggunaHentiMuzik = false; // Reset penanda kerana pengguna sengaja tekan Play
                 }).catch(e=>{
                     alert("Pelayar web menghalang muzik automatik. Sila interaksi dengan skrin dahulu.");
                 }); 
-                btnMuzik.classList.add('active'); ikonMuzik.classList.add('fa-spin'); 
+                btnMuzik.classList.add('active'); 
+                ikonMuzik.classList.add('fa-spin'); 
             } 
             else { 
                 audio.pause(); 
                 muzikBermula = false;
-                btnMuzik.classList.remove('active'); ikonMuzik.classList.remove('fa-spin'); 
+                penggunaHentiMuzik = true; // Tandakan bahawa pengguna sengaja Stop muzik
+                btnMuzik.classList.remove('active'); 
+                ikonMuzik.classList.remove('fa-spin'); 
             }
         };
 
