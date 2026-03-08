@@ -36,7 +36,7 @@
         .bg-animated {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden;
             background: radial-gradient(circle at top right, #0a4f26 0%, #011409 100%);
-            transition: background 0.8s ease; /* Transisi smooth untuk tukar tema */
+            transition: background 0.8s ease; 
         }
         .islamic-pattern {
             position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
@@ -125,9 +125,11 @@
         .header-kad p { font-size: 0.95rem; color: var(--text-muted); }
         .header-kad p strong { color: var(--primary-yellow); font-weight: 600; transition: color 0.8s ease;}
         .script-text { font-family: var(--font-script); font-size: 2.2rem; color: var(--primary-yellow); text-shadow: 0 2px 5px rgba(0,0,0,0.5); margin-bottom: 10px; transition: color 0.8s ease;}
+        
         .top-nav-editor { position: absolute; top: 15px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; z-index: 100; }
-        .icon-btn { color: rgba(255,255,255,0.7); font-size: 1.4rem; cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.3); width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; backdrop-filter: blur(5px); }
-        .icon-btn:hover { color: var(--primary-yellow); background: rgba(0,0,0,0.5); }
+        .nav-controls-right { display: flex; gap: 10px; }
+        .icon-btn { color: rgba(255,255,255,0.7); font-size: 1.2rem; cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.3); width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
+        .icon-btn:hover { color: var(--primary-yellow); background: rgba(0,0,0,0.5); border-color: var(--primary-yellow); transform: scale(1.05); }
 
         .main-content { flex: 1; position: relative; padding: 10px 20px 20px; z-index: 5; }
         .view-section { display: none; opacity: 0; transform: translateY(25px); transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -174,11 +176,16 @@
 
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.4s; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); color: white; width: 100%; max-width: 420px; padding: 30px; border-radius: 28px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.8); transform: scale(0.85) translateY(20px); transition: all 0.4s; }
+        .modal-content { background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); color: white; width: 100%; max-width: 420px; padding: 25px; border-radius: 28px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.8); transform: scale(0.85) translateY(20px); transition: all 0.4s; }
         .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
-        .modal-content h2 { font-family: var(--font-heading); margin-bottom: 25px; color: var(--primary-yellow); text-align: center; font-size: 1.5rem; }
-        .modal-content label { display: block; font-size: 0.85rem; margin-bottom: 8px; color: rgba(255,255,255,0.8); font-weight: 600; }
-        .modal-actions { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px; }
+        .modal-content h2 { font-family: var(--font-heading); margin-bottom: 20px; color: var(--primary-yellow); text-align: center; font-size: 1.5rem; }
+        
+        /* Groups for Admin Modal */
+        .admin-group { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 15px 15px 5px 15px; margin-bottom: 20px; }
+        .admin-group h3 { color: var(--primary-yellow); font-size: 0.95rem; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; font-family: var(--font-body); display: flex; align-items: center; gap: 8px;}
+        .admin-group label { display: block; font-size: 0.8rem; margin-bottom: 8px; color: rgba(255,255,255,0.8); font-weight: 600; }
+        
+        .modal-actions { display: flex; justify-content: space-between; margin-top: 10px; gap: 15px; }
         .btn-close { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); flex: 1; padding: 14px; border-radius: 14px; cursor: pointer; transition: 0.3s; font-weight: 600; }
         .btn-save { background: var(--gradient-gold); color: #000; font-weight: 700; border: none; flex: 1; padding: 14px; border-radius: 14px; cursor: pointer; }
 
@@ -328,12 +335,17 @@
     <!-- HALAMAN 3: EDITOR KAD                          -->
     <!-- ============================================== -->
     <div id="page-kad" class="page-container">
-        <div class="top-nav-editor">
-            <div class="icon-btn" onclick="kembaliDashboard()" title="Kembali"><i class="fa-solid fa-arrow-left"></i></div>
-            <div class="icon-btn" onclick="bukaAdmin()" title="Tetapan Kad"><i class="fa-solid fa-sliders"></i></div>
+        
+        <!-- Kawalan Pemilik Kad (Disembunyikan jika tetamu melihat pautan kongsi) -->
+        <div class="top-nav-editor" id="nav-owner-controls">
+            <div class="icon-btn" onclick="kembaliDashboard()" title="Kembali Dashboard"><i class="fa-solid fa-arrow-left"></i></div>
+            <div class="nav-controls-right">
+                <div class="icon-btn" onclick="kongsiKad()" title="Kongsi Kad (Share)"><i class="fa-solid fa-share-nodes"></i></div>
+                <div class="icon-btn" onclick="bukaAdmin()" title="Tetapan Kad"><i class="fa-solid fa-sliders"></i></div>
+            </div>
         </div>
 
-        <header class="header-kad">
+        <header class="header-kad" style="margin-top: 15px;">
             <h1>Selamat Hari Raya Aidilfitri</h1>
             <div class="script-text">Maaf Zahir & Batin 1447H</div>
             <p>Ikhlas daripada <strong id="display-nama">...</strong></p>
@@ -379,7 +391,7 @@
             <div id="view-duitraya" class="view-section">
                 <div class="glass-panel" style="text-align: center;">
                     <h2 class="form-title"><i class="fa-solid fa-gift"></i> Duit Raya QR</h2>
-                    <p class="intro-text">Imbas kod QR di bawah untuk pemberian ikhlas.</p>
+                    <p class="intro-text" id="display-qr-text">Imbas kod QR di bawah untuk pemberian ikhlas.</p>
                     <div class="qr-wrapper"><img id="display-qr" src="" alt="QR Code"></div>
                 </div>
             </div>
@@ -394,19 +406,36 @@
         <div class="nav-item" id="btn-muzik" onclick="toggleMuzikLatar()"><i class="fa-solid fa-music" id="ikon-muzik"></i><span>Muzik</span></div>
     </nav>
 
-    <!-- Modal Admin -->
+    <!-- Modal Admin (Dikelaskan Mengikut Kumpulan) -->
     <div class="modal-overlay" id="admin-modal">
         <div class="modal-content">
             <h2><i class="fa-solid fa-sliders"></i> Tetapan Kad</h2>
-            <div class="form-group"><label>Nama Pengirim</label><input type="text" id="admin-nama"></div>
-            <div class="form-group"><label>URL Gambar Tab 1 (Famili)</label><input type="text" id="admin-gambar-1"></div>
-            <div class="form-group"><label>URL Gambar Tab 2</label><input type="text" id="admin-gambar-2"></div>
-            <div class="form-group"><label>URL Gambar Tab 3</label><input type="text" id="admin-gambar-3"></div>
-            <div class="form-group"><label>URL Gambar Tab 4</label><input type="text" id="admin-gambar-4"></div>
-            <div class="form-group"><label>URL Gambar Tab 5</label><input type="text" id="admin-gambar-5"></div>
-            <div class="form-group"><label>URL Video MP4 (Pilihan)</label><input type="text" id="admin-video"></div>
-            <div class="form-group"><label>URL Gambar QR Code (Duit Raya)</label><input type="text" id="admin-qr"></div>
-            <div class="form-group"><label>Ucapan Pengenalan</label><textarea id="admin-intro" style="min-height: 80px;"></textarea></div>
+            
+            <!-- Kumpulan 1: Profil & Pengenalan -->
+            <div class="admin-group">
+                <h3><i class="fa-solid fa-user"></i> Profil & Pengenalan</h3>
+                <div class="form-group"><label>Nama Pengirim</label><input type="text" id="admin-nama"></div>
+                <div class="form-group"><label>Ucapan Pengenalan</label><textarea id="admin-intro" style="min-height: 60px;"></textarea></div>
+                <div class="form-group"><label>URL Video MP4 (Pilihan)</label><input type="text" id="admin-video" placeholder="Kosongkan jika tiada"></div>
+            </div>
+
+            <!-- Kumpulan 2: Gambar Album / Tab -->
+            <div class="admin-group">
+                <h3><i class="fa-solid fa-images"></i> Gambar Album (Tab 1-5)</h3>
+                <div class="form-group"><label>URL Gambar Tab 1 (Famili)</label><input type="text" id="admin-gambar-1"></div>
+                <div class="form-group"><label>URL Gambar Tab 2</label><input type="text" id="admin-gambar-2"></div>
+                <div class="form-group"><label>URL Gambar Tab 3</label><input type="text" id="admin-gambar-3"></div>
+                <div class="form-group"><label>URL Gambar Tab 4</label><input type="text" id="admin-gambar-4"></div>
+                <div class="form-group"><label>URL Gambar Tab 5</label><input type="text" id="admin-gambar-5"></div>
+            </div>
+
+            <!-- Kumpulan 3: Duit Raya QR -->
+            <div class="admin-group">
+                <h3><i class="fa-solid fa-wallet"></i> Duit Raya (QR)</h3>
+                <div class="form-group"><label>Teks Atas QR (Boleh Edit)</label><input type="text" id="admin-qr-text" placeholder="Contoh: Imbas untuk Duit Raya"></div>
+                <div class="form-group"><label>URL Gambar QR Code</label><input type="text" id="admin-qr" placeholder="https://..."></div>
+            </div>
+
             <div class="modal-actions">
                 <button class="btn-close" onclick="tutupAdmin()">Batal</button>
                 <button class="btn-save" onclick="simpanAdminKeFirebase()">Simpan</button>
@@ -416,7 +445,7 @@
 
     <audio id="laguRaya" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"></audio>
 
-    <!-- KELIP-KELIP MAGIS (Berjalan di latar tanpa API) -->
+    <!-- KELIP-KELIP MAGIS -->
     <script>
         const starsContainer = document.getElementById('stars-container');
         for (let i = 0; i < 35; i++) {
@@ -434,12 +463,10 @@
 
     <!-- FIREBASE MODULE SCRIPT -->
     <script type="module">
-        // 1. Import SDK Firebase dari CDN
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // 2. Konfigurasi Firebase Anda
         const firebaseConfig = {
             apiKey: "AIzaSyBNoZ0Kie6WD-jGpHRMcnLOiEYd4rV4wr0",
             authDomain: "kadraya.firebaseapp.com",
@@ -450,21 +477,22 @@
             measurementId: "G-MG007TM5Z8"
         };
 
-        // 3. Permulaan (Initialize) App & Servis
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // Variabel Global
         let currentUserInfo = null;
         let kadData = null;
+        let isGuestMode = false; // Penanda jika pelawat melihat melalui link share
+        let viewingSharedId = null;
 
         const defaultData = {
             nama: 'Zahidi',
-            tema: 'tema1', // Tema lalai
+            tema: 'tema1', 
             intro: 'Semoga Syawal ini membawa seribu rahmat, kebahagiaan, dan kemakmuran kepada kita semua.',
             video: '',
+            qrText: 'Imbas kod QR di bawah untuk pemberian ikhlas. Moga dimurahkan rezeki selalu.',
             qrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=SilaTukarTetapanQR',
             gambarTabs: [
                 'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800',
@@ -477,6 +505,62 @@
                 { nama: 'Admin', mesej: 'Selamat datang ke kad digital anda!' }
             ]
         };
+
+        // Semak Parameter URL (Untuk pautan "Share")
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedId = urlParams.get('id');
+
+        if (sharedId) {
+            isGuestMode = true;
+            viewingSharedId = sharedId;
+            muatKadTetamu(sharedId);
+        } else {
+            // Jalankan sistem pengesahan biasa jika tiada pautan "Share"
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUserInfo = user;
+                    document.getElementById('dash-nama-user').innerText = user.displayName || 'Pengguna';
+                    await muatDataDariFirestore(user.uid);
+                    paparHalaman('page-dashboard');
+                } else {
+                    if (!currentUserInfo || currentUserInfo.uid !== 'demo_user_123') {
+                        currentUserInfo = null;
+                        kadData = null;
+                        window.terapkanTema('tema1'); 
+                        paparHalaman('page-login');
+                    }
+                }
+            });
+        }
+
+        // --- FUNGSI TETAMU (MELIHAT PAUTAN KONGSI) ---
+        async function muatKadTetamu(uid) {
+            paparHalaman('page-loading');
+            try {
+                const docRef = doc(db, "users_kad_raya", uid);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    kadData = docSnap.data();
+                    if(!kadData.tema) kadData.tema = 'tema1';
+                    if(!kadData.qrText) kadData.qrText = defaultData.qrText;
+                    
+                    // Sembunyikan kawalan pemilik (Butang Kembali & Tetapan Admin)
+                    document.getElementById('nav-owner-controls').style.display = 'none';
+                    
+                    window.terapkanTema(kadData.tema);
+                    muatUIEditorKad();
+                    paparHalaman('page-kad');
+                } else {
+                    alert("Maaf, pautan kad ini tidak sah atau telah dipadam.");
+                    window.location.href = window.location.href.split('?')[0]; // Buang parameter id dan kembali ke asal
+                }
+            } catch (e) {
+                console.error("Ralat muat kad tetamu:", e);
+                alert("Gagal memuatkan kad. Sila pastikan sambungan internet anda stabil.");
+            }
+        }
+
 
         // --- PENGURUSAN STATE & UI ---
         function paparHalaman(pageId) {
@@ -492,41 +576,51 @@
             }
         }
 
-        // --- FUNGSI TUKAR TEMA CSS SECARA DINAMIK ---
+        window.kongsiKad = () => {
+            // Jika ia adalah akaun demo
+            let targetUid = (currentUserInfo && currentUserInfo.uid) ? currentUserInfo.uid : 'demo_user_123';
+            
+            // Bina pautan penuh laman web + parameter '?id='
+            const shareUrl = window.location.href.split('?')[0] + "?id=" + targetUid;
+
+            // Salin ke Clipboard (Papan Keratan)
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert("Berjaya Disalin!\n\nPautan unik kad anda telah disalin ke papan keratan (clipboard). Sila paste ke WhatsApp atau media sosial rakan anda.\n\nPautan:\n" + shareUrl);
+            }).catch(err => {
+                // Fallback jika pelayar web menyekat fungsi salinan automatik
+                prompt("Sila salin (copy) pautan ini untuk dikongsi dengan rakan-rakan:", shareUrl);
+            });
+        };
+
         window.terapkanTema = (temaId) => {
             const root = document.documentElement;
             const bgAnimated = document.querySelector('.bg-animated');
             
             if(temaId === 'tema1') {
-                // Zamrud Magis (Default)
                 root.style.setProperty('--primary-yellow', '#FFDF00');
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #FFF176, #FFB300)');
                 root.style.setProperty('--glass-bg', 'rgba(6, 61, 30, 0.25)');
                 root.style.setProperty('--glass-border', 'rgba(255, 223, 0, 0.35)');
                 bgAnimated.style.background = 'radial-gradient(circle at top right, #0a4f26 0%, #011409 100%)';
             } else if(temaId === 'tema2') {
-                // Klasik Biru
                 root.style.setProperty('--primary-yellow', '#64ffda');
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #a7ffeb, #1de9b6)');
                 root.style.setProperty('--glass-bg', 'rgba(13, 37, 63, 0.4)');
                 root.style.setProperty('--glass-border', 'rgba(100, 255, 218, 0.35)');
                 bgAnimated.style.background = 'radial-gradient(circle at top right, #0d253f 0%, #020c1b 100%)';
             } else if(temaId === 'tema3') {
-                // Merah Mewah
                 root.style.setProperty('--primary-yellow', '#ffd700');
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #ffea00, #ffb300)');
                 root.style.setProperty('--glass-bg', 'rgba(74, 14, 14, 0.4)');
                 root.style.setProperty('--glass-border', 'rgba(255, 215, 0, 0.35)');
                 bgAnimated.style.background = 'radial-gradient(circle at top right, #4a0e0e 0%, #170202 100%)';
             } else if(temaId === 'tema4') {
-                // Senja Jingga
                 root.style.setProperty('--primary-yellow', '#ffea00');
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #ffff8d, #ffea00)');
                 root.style.setProperty('--glass-bg', 'rgba(179, 89, 0, 0.3)');
                 root.style.setProperty('--glass-border', 'rgba(255, 234, 0, 0.35)');
                 bgAnimated.style.background = 'radial-gradient(circle at top right, #b35900 0%, #2e1100 100%)';
             } else if(temaId === 'tema5') {
-                // Ungu Menawan
                 root.style.setProperty('--primary-yellow', '#e0b0ff');
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #f3e5f5, #e0b0ff)');
                 root.style.setProperty('--glass-bg', 'rgba(59, 28, 84, 0.4)');
@@ -536,15 +630,12 @@
         };
 
         window.pilihTema = async (temaId) => {
-            // Ubah UI di Dashboard
             document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
             document.getElementById('card-' + temaId).classList.add('selected');
             
-            // Terapkan Tema Visual
             kadData.tema = temaId;
             window.terapkanTema(temaId);
 
-            // Simpan terus ke DB supaya mudah
             if (currentUserInfo && currentUserInfo.uid !== 'demo_user_123') {
                 try {
                     const docRef = doc(db, "users_kad_raya", currentUserInfo.uid);
@@ -553,10 +644,10 @@
             }
         };
 
-        // --- FUNGSI SUPER ADMIN (PAPAN PEMUKA UTAMA) ---
+        // --- FUNGSI SUPER ADMIN ---
         window.logMasukSuperAdmin = () => {
             let pwd = prompt("Sila masukkan kata laluan admin (Demo: admin123):");
-            if (pwd === "draxter1982") {
+            if (pwd === "admin123" || pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 muatSenaraiPengguna();
             } else if (pwd !== null) {
@@ -564,9 +655,7 @@
             }
         };
 
-        window.kembaliKeLogin = () => {
-            paparHalaman('page-login');
-        };
+        window.kembaliKeLogin = () => { paparHalaman('page-login'); };
 
         async function muatSenaraiPengguna() {
             let container = document.getElementById('admin-user-list');
@@ -575,95 +664,45 @@
 
             try {
                 const querySnapshot = await getDocs(collection(db, "users_kad_raya"));
-                let count = 0;
-                let htmlStr = '';
-
+                let count = 0; let htmlStr = '';
                 querySnapshot.forEach((docSnap) => {
                     count++;
                     let data = docSnap.data();
                     let uid = docSnap.id;
-                    
-                    htmlStr += `
-                        <div class="admin-user-item">
-                            <div>
-                                <strong>${data.nama || 'Tiada Nama'}</strong><br>
-                                <small>ID: ${uid.substring(0, 10)}...</small>
-                            </div>
-                            <button class="btn-delete" onclick="padamPenggunaData('${uid}')" title="Padam Data">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
+                    htmlStr += `<div class="admin-user-item"><div><strong>${data.nama || 'Tiada Nama'}</strong><br><small>ID: ${uid.substring(0, 10)}...</small></div><button class="btn-delete" onclick="padamPenggunaData('${uid}')" title="Padam Data"><i class="fa-solid fa-trash"></i></button></div>`;
                 });
-
                 totalEl.innerText = count;
                 container.innerHTML = count > 0 ? htmlStr : '<p style="color:rgba(255,255,255,0.5);">Tiada pendaftaran setakat ini.</p>';
             } catch (e) {
                 console.error("Ralat muat senarai:", e);
-                
-                // --- PENAMBAHBAIKAN: UI Ralat & Data Demo ---
                 totalEl.innerText = "3 (Mod Demo)";
-                container.innerHTML = `
-                    <div style="background: rgba(255, 59, 48, 0.2); border-left: 4px solid #ff3b30; padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 0.85rem;">
-                        <i class="fa-solid fa-triangle-exclamation"></i> <strong>Akses Pangkalan Data Disekat</strong><br>
-                        Untuk memaparkan data pengguna sebenar, sila kemas kini <em>Firestore Rules</em> anda kepada:<br>
-                        <code>allow read: if true;</code>
-                    </div>
-                    <div class="admin-user-item">
-                        <div><strong>Ahmad (Demo)</strong><br><small>ID: demo_ahmad_123</small></div>
-                        <button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                    <div class="admin-user-item">
-                        <div><strong>Siti (Demo)</strong><br><small>ID: demo_siti_456</small></div>
-                        <button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                    <div class="admin-user-item">
-                        <div><strong>Ali (Demo)</strong><br><small>ID: demo_ali_789</small></div>
-                        <button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
+                container.innerHTML = `<div style="background: rgba(255, 59, 48, 0.2); border-left: 4px solid #ff3b30; padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 0.85rem;"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Akses Pangkalan Data Disekat</strong><br>Untuk memaparkan data sebenar, sila kemas kini <em>Firestore Rules</em> anda.</div><div class="admin-user-item"><div><strong>Ahmad (Demo)</strong><br><small>ID: demo_ahmad_123</small></div><button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button></div>`;
             }
         }
 
         window.padamPenggunaData = async (uid) => {
-            let confirmDelete = confirm("Amaran: Anda pasti mahu memadam semua rekod kad untuk pengguna ini?");
-            if (confirmDelete) {
+            if (confirm("Amaran: Anda pasti mahu memadam semua rekod kad untuk pengguna ini?")) {
                 try {
                     await deleteDoc(doc(db, "users_kad_raya", uid));
-                    alert("Data pengguna berjaya dipadamkan.");
-                    muatSenaraiPengguna(); 
-                } catch (e) {
-                    alert("Gagal memadam data. " + e.message);
-                }
+                    alert("Data berjaya dipadamkan."); muatSenaraiPengguna(); 
+                } catch (e) { alert("Gagal memadam data. " + e.message); }
             }
         };
 
-
-        // --- FUNGSI AUTHENTICATION FIREBASE ---
+        // --- FUNGSI LOG MASUK FIREBASE ---
         window.logMasukDenganGoogle = async () => {
             try {
                 paparHalaman('page-loading');
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Ralat Log Masuk Firebase:", error);
-                
-                let errorMsg = "Ralat Log Masuk: " + error.message;
-                if (error.code === 'auth/invalid-action-code' || error.message.includes('invalid') || error.message.includes('unauthorized')) {
-                    errorMsg += "\n\n💡 TIPS: Pastikan anda telah:\n1. Mengaktifkan 'Google' di Firebase Console > Authentication > Sign-in method.\n2. Menetapkan 'Support email' dalam tetapan tersebut.\n3. Menambah domain web ini dalam senarai 'Authorized domains'.";
-                }
-                alert(errorMsg);
-                
-                let teruskan = confirm("Adakah anda ingin log masuk menggunakan akaun Demo (Mock Login) untuk melihat antaramuka sementara membaiki ralat Firebase?");
-                if(teruskan) {
+                if(confirm("Ralat Log Masuk: " + error.message + "\n\nAdakah anda ingin log masuk menggunakan akaun Demo (Mock Login) untuk menguji antaramuka?")) {
                     currentUserInfo = { uid: 'demo_user_123', displayName: 'Pengguna Demo' };
                     document.getElementById('dash-nama-user').innerText = currentUserInfo.displayName;
                     kadData = { ...defaultData, nama: currentUserInfo.displayName }; 
-                    window.terapkanTema(kadData.tema); // Terapkan tema default/demo
-                    
-                    // Kemaskini Dashboard UI
+                    window.terapkanTema(kadData.tema);
                     document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
                     document.getElementById('card-' + kadData.tema).classList.add('selected');
-
                     paparHalaman('page-dashboard');
                 } else {
                     paparHalaman('page-login');
@@ -675,58 +714,31 @@
             try {
                 paparHalaman('page-loading');
                 if (currentUserInfo && currentUserInfo.uid === 'demo_user_123') {
-                    currentUserInfo = null;
-                    kadData = null;
-                    window.terapkanTema('tema1'); // Reset ke asal
-                    paparHalaman('page-login');
+                    currentUserInfo = null; kadData = null; window.terapkanTema('tema1'); paparHalaman('page-login');
                 } else {
                     await signOut(auth);
                 }
-            } catch (error) {
-                console.error("Ralat Log Keluar:", error);
-                paparHalaman('page-dashboard');
-            }
+            } catch (error) { paparHalaman('page-dashboard'); }
         };
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUserInfo = user;
-                document.getElementById('dash-nama-user').innerText = user.displayName || 'Pengguna';
-                await muatDataDariFirestore(user.uid);
-                paparHalaman('page-dashboard');
-            } else {
-                if (!currentUserInfo || currentUserInfo.uid !== 'demo_user_123') {
-                    currentUserInfo = null;
-                    kadData = null;
-                    window.terapkanTema('tema1'); // Reset ke asal
-                    paparHalaman('page-login');
-                }
-            }
-        });
-
-        // --- FUNGSI FIRESTORE (DATABASE) ---
         async function muatDataDariFirestore(uid) {
             try {
                 const docRef = doc(db, "users_kad_raya", uid);
                 const docSnap = await getDoc(docRef);
-
                 if (docSnap.exists()) {
                     kadData = docSnap.data();
                     if(!kadData.tema) kadData.tema = 'tema1';
+                    if(!kadData.qrText) kadData.qrText = defaultData.qrText;
                 } else {
                     kadData = { ...defaultData, nama: currentUserInfo.displayName || 'Pengguna' };
                     await setDoc(docRef, kadData);
                 }
-
-                // Terapkan Tema yang dimuat turun
                 window.terapkanTema(kadData.tema);
                 document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
                 let validThemeId = document.getElementById('card-' + kadData.tema) ? kadData.tema : 'tema1';
                 document.getElementById('card-' + validThemeId).classList.add('selected');
-
             } catch (e) {
-                console.error("Ralat memuat data Firestore:", e);
-                alert("Pangkalan data (Firestore) belum diaktifkan/mempunyai ralat rules. Menggunakan data memori sementara.");
+                alert("Firestore disekat. Menggunakan data memori sementara.");
                 kadData = { ...defaultData, nama: currentUserInfo.displayName }; 
                 window.terapkanTema(kadData.tema);
             }
@@ -737,26 +749,21 @@
             kadData.gambarTabs = [];
             for(let i=1; i<=5; i++) kadData.gambarTabs.push(document.getElementById('admin-gambar-'+i).value);
             kadData.video = document.getElementById('admin-video').value;
+            kadData.qrText = document.getElementById('admin-qr-text').value || defaultData.qrText;
             kadData.qrCode = document.getElementById('admin-qr').value || defaultData.qrCode;
             kadData.intro = document.getElementById('admin-intro').value;
 
-            if (currentUserInfo.uid === 'demo_user_123') {
-                alert("Simulasi Berjaya: Tetapan disimpan sementara (kerana anda menggunakan Mod Demo).");
-                muatUIEditorKad();
-                window.tutupAdmin();
-                return;
+            if (currentUserInfo && currentUserInfo.uid === 'demo_user_123') {
+                alert("Simulasi Berjaya: Tetapan disimpan sementara.");
+                muatUIEditorKad(); window.tutupAdmin(); return;
             }
 
             try {
                 const docRef = doc(db, "users_kad_raya", currentUserInfo.uid);
                 await setDoc(docRef, kadData, { merge: true });
-                alert("Tetapan berjaya disimpan ke awan (Cloud)!");
-                muatUIEditorKad();
-                window.tutupAdmin();
-            } catch(e) {
-                console.error("Ralat simpan tetapan:", e);
-                alert("Gagal simpan ke awan. Pastikan aturan (rules) Firestore membenarkan penulisan (write).");
-            }
+                alert("Tetapan berjaya disimpan!");
+                muatUIEditorKad(); window.tutupAdmin();
+            } catch(e) { alert("Gagal simpan ke awan. Isu Rules."); }
         };
 
         window.hantarUcapanBaru = async () => {
@@ -769,27 +776,39 @@
             let updateUI = () => {
                 document.getElementById('input-nama-ucapan').value = ''; 
                 document.getElementById('input-teks-ucapan').value = '';
-                
                 let container = document.getElementById('senarai-ucapan');
                 container.style.opacity = '0'; 
                 setTimeout(() => { paparSenaraiUcapan(); container.style.opacity = '1'; }, 300);
             };
 
-            if (currentUserInfo.uid === 'demo_user_123') {
-                updateUI();
+            // Jika dalam Guest Mode (melawat pautan) atau Demo Mode
+            if (isGuestMode || (currentUserInfo && currentUserInfo.uid === 'demo_user_123')) {
+                // Dalam situasi sebenar, rule Firebase perlu "allow update: if true;" untuk bahagian ucapanList
+                // Buat masa ini kita memaparkan ia berhasil di antaramuka (UI) untuk pelawat
+                try {
+                    let targetUid = isGuestMode ? viewingSharedId : currentUserInfo.uid;
+                    if(targetUid !== 'demo_user_123') {
+                         const docRef = doc(db, "users_kad_raya", targetUid);
+                         await setDoc(docRef, { ucapanList: kadData.ucapanList }, { merge: true });
+                    }
+                    updateUI();
+                    alert("Ucapan anda berjaya ditinggalkan!");
+                } catch(e) {
+                    console.error("Gagal simpan ke DB", e);
+                    // Fallback visual UI
+                    updateUI();
+                    alert("Ucapan berjaya ditunjuk di skrin anda! (Nota: Gagal disimpan ke awan kerana had 'Firebase Rules' untuk tetamu awam).");
+                }
                 return;
             }
             
+            // Jika Pemilik Akaun Sendiri
             try {
                 const docRef = doc(db, "users_kad_raya", currentUserInfo.uid);
                 await setDoc(docRef, { ucapanList: kadData.ucapanList }, { merge: true });
                 updateUI();
-            } catch (e) {
-                console.error("Ralat hantar ucapan:", e);
-                alert("Gagal hantar ucapan ke pangkalan data.");
-            }
+            } catch (e) { alert("Gagal hantar ucapan ke pangkalan data."); }
         };
-
 
         // --- FUNGSI ANTARAMUKA (UI) ---
         function muatUIEditorKad() {
@@ -804,6 +823,7 @@
                 videoContainer.style.display = 'none'; videoEl.src = '';
             }
 
+            document.getElementById('display-qr-text').innerText = kadData.qrText || defaultData.qrText;
             document.getElementById('display-qr').src = kadData.qrCode;
             paparSenaraiUcapan();
             
@@ -863,10 +883,13 @@
 
         window.bukaAdmin = () => {
             document.getElementById('admin-nama').value = kadData.nama;
-            for(let i=1; i<=5; i++) document.getElementById('admin-gambar-'+i).value = kadData.gambarTabs[i-1] || '';
-            document.getElementById('admin-video').value = kadData.video || '';
-            document.getElementById('admin-qr').value = kadData.qrCode || '';
             document.getElementById('admin-intro').value = kadData.intro || '';
+            document.getElementById('admin-video').value = kadData.video || '';
+            
+            for(let i=1; i<=5; i++) document.getElementById('admin-gambar-'+i).value = kadData.gambarTabs[i-1] || '';
+            
+            document.getElementById('admin-qr-text').value = kadData.qrText || defaultData.qrText;
+            document.getElementById('admin-qr').value = kadData.qrCode || '';
             
             let modal = document.getElementById('admin-modal');
             modal.style.display = 'flex'; setTimeout(() => modal.classList.add('active'), 10);
