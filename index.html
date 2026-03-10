@@ -168,7 +168,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            aspect-ratio: 6 / 10; /* Set ratio 6:10 */
+            aspect-ratio: 6 / 10; /* Nisbah potret 6:10 */
             background-color: #0a0a0a;
         }
 
@@ -253,7 +253,9 @@
         .btn-close { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); flex: 1; padding: 14px; border-radius: 14px; cursor: pointer; transition: 0.3s; font-weight: 600; }
         .btn-save { background: var(--gradient-gold); color: #000; font-weight: 700; border: none; flex: 1; padding: 14px; border-radius: 14px; cursor: pointer; }
 
+        /* Animasi Tambahan */
         @keyframes slideUpNav { from { bottom: -100px; opacity: 0; } to { bottom: 15px; opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* SUPER ADMIN STYLES */
         .admin-user-item { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary-yellow); transition: 0.3s; }
@@ -454,7 +456,7 @@
                             <video id="display-video" controls><source src="" type="video/mp4"></video>
                         </div>
                         
-                        <!-- Slider Carousel -->
+                        <!-- Slider Carousel (Nisbah 6:10) -->
                         <div class="carousel-container" id="image-carousel">
                             <div class="carousel-track" id="carousel-track">
                                 <div class="carousel-slide"><img id="slide-img-1" src="" alt="Slide 1"></div>
@@ -504,6 +506,7 @@
             </div>
         </div>
         
+        <!-- Iklan Footer di dalam Editor Kad -->
         <div class="ad-banner" style="position: static; margin-bottom: 20px;">
             Nak Buat Website atau Sistem? <br><a href="https://ummars.com" target="_blank">ummars.com</a>
         </div>
@@ -557,7 +560,7 @@
                 </div>
             </div>
 
-            <!-- Kumpulan 3: Gambar Kulit Tema (Baru) -->
+            <!-- Kumpulan 3: Gambar Kulit Tema -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-palette"></i> Imej Paparan Tema</h3>
                 <div class="form-group">
@@ -582,7 +585,7 @@
                 </div>
             </div>
 
-            <!-- Kumpulan 4: Gambar Album / Tab -->
+            <!-- Kumpulan 4: Gambar Album / Slider -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-images"></i> Gambar Album (Slide 1-5)</h3>
                 
@@ -766,7 +769,8 @@
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     currentUserInfo = user;
-                    document.getElementById('dash-nama-user').innerText = user.displayName || 'Pengguna';
+                    let dashName = document.getElementById('dash-nama-user');
+                    if (dashName) dashName.innerText = user.displayName || 'Pengguna';
                     await muatDataDariFirestore(user.uid);
                     paparHalaman('page-dashboard');
                 } else {
@@ -813,7 +817,8 @@
                 if(!kadData.temaImages) kadData.temaImages = defaultData.temaImages;
                 if(!kadData.ucapanList) kadData.ucapanList = [];
 
-                document.getElementById('nav-owner-controls').style.display = 'none';
+                let navOwner = document.getElementById('nav-owner-controls');
+                if (navOwner) navOwner.style.display = 'none';
                 
                 window.terapkanTema(kadData.tema);
                 muatUIEditorKad();
@@ -841,7 +846,7 @@
             
             if(pageId === 'page-kad') {
                 if(bottomNav) bottomNav.classList.add('active');
-                if(!isGuestMode) initSlider(); 
+                if(!isGuestMode && typeof window.initSlider === 'function') window.initSlider(); 
             } else {
                 if(bottomNav) bottomNav.classList.remove('active');
                 if(displayVideo) displayVideo.pause();
@@ -925,7 +930,7 @@
 
         // --- FUNGSI SUPER ADMIN ---
         window.logMasukSuperAdmin = () => {
-            let pwd = prompt("Sila masukkan kata laluan admin:");
+            let pwd = prompt("Sila masukkan kata laluan admin ");
             if (pwd === "draxter1982" || pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 muatSenaraiPengguna();
@@ -1036,9 +1041,19 @@
                 
                 setupRealtimeUcapan();
             } catch (e) {
-                alert("Firestore disekat. Menggunakan data memori sementara.");
-                kadData = { ...defaultData, nama: currentUserInfo.displayName }; 
+                console.error("Akses Firestore disekat:", e);
+                kadData = { ...defaultData, nama: currentUserInfo ? currentUserInfo.displayName : 'Pengguna' }; 
+                
+                let dashName = document.getElementById('dash-nama-user');
+                if(dashName && currentUserInfo) {
+                    dashName.innerText = currentUserInfo.displayName + " (Mod Tempatan)";
+                }
+                
                 window.terapkanTema(kadData.tema);
+                document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
+                let validThemeId = document.getElementById('card-' + kadData.tema) ? kadData.tema : 'tema1';
+                let validCard = document.getElementById('card-' + validThemeId);
+                if(validCard) validCard.classList.add('selected');
             }
         }
 
@@ -1258,6 +1273,115 @@
             } catch (e) { alert("Gagal hantar ucapan ke pangkalan data."); }
         };
 
+        // --- SISTEM SLIDER / CAROUSEL ---
+        let currentSlide = 0;
+        let isDragging = false;
+        let startPos = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+
+        window.initSlider = () => {
+            const track = document.getElementById('carousel-track');
+            if(!track) return;
+            
+            for(let i=0; i<5; i++) {
+                let img = document.getElementById(`slide-img-${i+1}`);
+                if(img && kadData && kadData.gambarTabs) {
+                    img.src = kadData.gambarTabs[i] || defaultData.gambarTabs[i];
+                }
+            }
+            currentSlide = 0;
+            window.updateSliderPosition();
+        };
+
+        window.updateSliderPosition = () => {
+            const track = document.getElementById('carousel-track');
+            if(!track) return;
+            
+            currentTranslate = currentSlide * -100;
+            prevTranslate = currentTranslate;
+            track.style.transform = `translateX(${currentTranslate}%)`;
+            
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                if(index === currentSlide) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+            
+            let tajuk = document.getElementById('tab-title');
+            let pantun = document.getElementById('teks-pantun');
+            if(tajuk && pantun) {
+                if(currentSlide === 0) { tajuk.innerText = "Famili"; pantun.innerHTML = "Pergi ke pekan membeli ketupat,<br>Singgah sebentar membeli pegaga;<br>Andai ada silap dan khilaf terbuat,<br>Maaf dipinta dari hati sekeluarga."; }
+                else if(currentSlide === 1) { tajuk.innerText = "Sahabat"; pantun.innerHTML = "Jauh di mata dekat di hati,<br>Salam kemaafan pengganti diri."; }
+                else { tajuk.innerText = "Memori " + (currentSlide+1); pantun.innerHTML = "Kenangan manis di pagi raya,<br>Kekal terpahat selamanya."; }
+            }
+        };
+
+        window.pindahSlide = (index) => {
+            currentSlide = index;
+            window.updateSliderPosition();
+        };
+
+        // Pasang event listener untuk sentuhan/drag
+        setTimeout(() => {
+            const track = document.getElementById('carousel-track');
+            if(track) {
+                track.addEventListener('touchstart', touchStart, {passive: true});
+                track.addEventListener('touchend', touchEnd);
+                track.addEventListener('touchmove', touchMove, {passive: true});
+
+                track.addEventListener('mousedown', touchStart);
+                track.addEventListener('mouseup', touchEnd);
+                track.addEventListener('mouseleave', () => { if(isDragging) touchEnd(); });
+                track.addEventListener('mousemove', touchMove);
+            }
+        }, 1000);
+
+        function touchStart(event) {
+            isDragging = true;
+            startPos = getPositionX(event);
+            const track = document.getElementById('carousel-track');
+            if(track) track.style.transition = 'none'; 
+        }
+
+        function touchMove(event) {
+            if (isDragging) {
+                const track = document.getElementById('carousel-track');
+                if(!track) return;
+                const currentPosition = getPositionX(event);
+                const diff = (currentPosition - startPos) / track.offsetWidth * 100;
+                let target = prevTranslate + diff;
+                if(target > 10) target = 10; 
+                if(target < -410) target = -410; 
+                track.style.transform = `translateX(${target}%)`;
+            }
+        }
+
+        function touchEnd() {
+            if(!isDragging) return;
+            isDragging = false;
+            const track = document.getElementById('carousel-track');
+            if(!track) return;
+            
+            let transformValue = track.style.transform;
+            let movedBy = 0;
+            if(transformValue.includes('translateX')) {
+                let val = parseFloat(transformValue.replace(/[^\d.-]/g, ''));
+                movedBy = val - prevTranslate;
+            }
+            
+            track.style.transition = 'transform 0.3s ease-in-out';
+            
+            if (movedBy < -15 && currentSlide < 4) currentSlide += 1;
+            if (movedBy > 15 && currentSlide > 0) currentSlide -= 1;
+            
+            window.updateSliderPosition();
+        }
+
+        function getPositionX(event) {
+            return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+        }
+
+
         // --- FUNGSI ANTARAMUKA (UI) ---
         function muatUIEditorKad() {
             let tajukUtama = document.getElementById('display-tajuk-utama');
@@ -1309,7 +1433,7 @@
             
             let pageKad = document.getElementById('page-kad');
             if(pageKad && pageKad.classList.contains('active')){
-                initSlider();
+                if(typeof window.initSlider === 'function') window.initSlider();
             }
         }
 
@@ -1335,7 +1459,7 @@
         };
 
         window.kembaliDashboard = () => paparHalaman('page-dashboard');
-        
+
         window.tukarViewVisual = (viewId, element) => {
             document.querySelectorAll('.nav-item').forEach(item => { if(item.id !== 'btn-muzik') item.classList.remove('active'); });
             element.classList.add('active');
@@ -1343,7 +1467,7 @@
             setTimeout(() => { 
                 let view = document.getElementById(viewId);
                 if(view) view.classList.add('active'); 
-                if(viewId === 'view-home') initSlider(); 
+                if(viewId === 'view-home' && typeof window.initSlider === 'function') window.initSlider(); 
             }, 50);
             
             let video = document.getElementById('display-video');
