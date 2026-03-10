@@ -137,15 +137,74 @@
 
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.2); border-radius: 28px; box-shadow: var(--glass-shadow), inset 0 0 20px rgba(255, 255, 255, 0.05); padding: 25px; position: relative; overflow: hidden; transition: all 0.8s ease; }
 
-        .home-layout { position: relative; padding-left: 25px; }
-        .side-tabs { position: absolute; left: -15px; top: 40px; display: flex; flex-direction: column; gap: 14px; z-index: 20; }
-        .tab { width: 48px; height: 48px; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; color: rgba(255,255,255,0.7); cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: translateX(-15px); }
-        .tab:hover { background: rgba(255, 255, 255, 0.1); color: white; transform: translateX(-10px); }
-        .tab.active { background: var(--gradient-gold); color: #000; border: none; transform: translateX(0) scale(1.05); box-shadow: 0 0 20px var(--primary-yellow-glow); }
+        .home-layout { position: relative; padding: 0;}
+        
+        /* Carousel Container */
+        .carousel-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
+            border: 3px solid var(--glass-border);
+            transition: border-color 0.8s ease;
+        }
 
-        .media-container { width: 100%; border-radius: 20px; overflow: hidden; border: 3px solid var(--glass-border); margin-bottom: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: border-color 0.8s ease; }
-        .media-container video, .media-container img { width: 100%; display: block; transition: opacity 0.5s ease; }
-        .media-container img { aspect-ratio: 1/1; object-fit: cover; }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+            width: 100%;
+            cursor: grab;
+        }
+        
+        .carousel-track:active {
+            cursor: grabbing;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 6 / 10; /* Set ratio 6:10 */
+            background-color: #0a0a0a;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* Navigation Dots */
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: -15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .dot.active {
+            background-color: var(--primary-yellow);
+            transform: scale(1.2);
+        }
+
+        .media-container video { width: 100%; display: block; border-radius: 20px; margin-bottom: 25px; border: 3px solid var(--glass-border); }
         .intro-text { font-size: 1.05rem; line-height: 1.6; margin-bottom: 25px; font-weight: 400; text-align: center; color: #f9fafb; }
         .tab-content-wrapper { transition: all 0.4s ease; text-align: center; }
         .tab-content-wrapper h2 { font-family: var(--font-heading); color: var(--primary-yellow); font-size: 1.6rem; margin-bottom: 15px; transition: color 0.8s ease;}
@@ -204,6 +263,27 @@
         .btn-delete { background: rgba(255, 59, 48, 0.8); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; }
         .btn-delete:hover { background: rgba(255, 59, 48, 1); transform: scale(1.05); }
 
+        /* Banner Iklan */
+        .ad-banner {
+            position: absolute;
+            bottom: 85px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            z-index: 10;
+        }
+        
+        .ad-banner a {
+            color: var(--primary-yellow);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .ad-banner a:hover {
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 <body>
@@ -242,6 +322,10 @@
             <div class="admin-link" onclick="logMasukSuperAdmin()">
                 Log Masuk Admin Sistem
             </div>
+        </div>
+        
+        <div class="ad-banner">
+            Nak Buat Website atau Sistem? <br><a href="https://ummars.com" target="_blank">ummars.com</a>
         </div>
     </div>
 
@@ -282,7 +366,7 @@
             <!-- TEMA 1 -->
             <div class="theme-card selected" id="card-tema1" onclick="pilihTema('tema1')">
                 <div class="badge-active">Terpilih</div>
-                <div class="theme-image"><img src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800" alt="Tema 1"></div>
+                <div class="theme-image"><img id="preview-tema1" src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800" alt="Tema 1"></div>
                 <div class="theme-info">
                     <h3>Tema 1: Zamrud Magis</h3>
                     <p>Hijau klasik dengan kilauan emas.</p>
@@ -292,7 +376,7 @@
             <!-- TEMA 2 -->
             <div class="theme-card" id="card-tema2" onclick="pilihTema('tema2')">
                 <div class="badge-active">Terpilih</div>
-                <div class="theme-image"><img src="https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=800" alt="Tema 2"></div>
+                <div class="theme-image"><img id="preview-tema2" src="https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=800" alt="Tema 2"></div>
                 <div class="theme-info">
                     <h3>Tema 2: Klasik Biru</h3>
                     <p>Malam biru gelap yang elegan.</p>
@@ -302,7 +386,7 @@
             <!-- TEMA 3 -->
             <div class="theme-card" id="card-tema3" onclick="pilihTema('tema3')">
                 <div class="badge-active">Terpilih</div>
-                <div class="theme-image"><img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800" alt="Tema 3"></div>
+                <div class="theme-image"><img id="preview-tema3" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800" alt="Tema 3"></div>
                 <div class="theme-info">
                     <h3>Tema 3: Merah Mewah</h3>
                     <p>Merah diraja dengan corak meriah.</p>
@@ -312,7 +396,7 @@
             <!-- TEMA 4 -->
             <div class="theme-card" id="card-tema4" onclick="pilihTema('tema4')">
                 <div class="badge-active">Terpilih</div>
-                <div class="theme-image"><img src="https://images.unsplash.com/photo-1507608158173-1dcec673a2e5?auto=format&fit=crop&q=80&w=800" alt="Tema 4"></div>
+                <div class="theme-image"><img id="preview-tema4" src="https://images.unsplash.com/photo-1507608158173-1dcec673a2e5?auto=format&fit=crop&q=80&w=800" alt="Tema 4"></div>
                 <div class="theme-info">
                     <h3>Tema 4: Senja Jingga</h3>
                     <p>Kehangatan suasana malam raya.</p>
@@ -322,7 +406,7 @@
             <!-- TEMA 5 -->
             <div class="theme-card" id="card-tema5" onclick="pilihTema('tema5')">
                 <div class="badge-active">Terpilih</div>
-                <div class="theme-image"><img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800" alt="Tema 5"></div>
+                <div class="theme-image"><img id="preview-tema5" src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800" alt="Tema 5"></div>
                 <div class="theme-info">
                     <h3>Tema 5: Ungu Menawan</h3>
                     <p>Sentuhan moden & kemasan rose gold.</p>
@@ -334,6 +418,10 @@
             <i class="fa-solid fa-pen-ruler"></i> Edit Kad Saya
         </button>
         <button class="btn-logout" onclick="logKeluarFirebase()">Log Keluar</button>
+        
+        <div class="ad-banner" style="position: static; margin-top: 20px; margin-bottom: 20px;">
+            Nak Buat Website atau Sistem? <br><a href="https://ummars.com" target="_blank">ummars.com</a>
+        </div>
     </div>
 
     <!-- ============================================== -->
@@ -359,19 +447,33 @@
         <div class="main-content">
             <div id="view-home" class="view-section active">
                 <div class="home-layout">
-                    <div class="side-tabs">
-                        <div class="tab active" onclick="tukarTabVisual(this, 1)">1</div>
-                        <div class="tab" onclick="tukarTabVisual(this, 2)">2</div>
-                        <div class="tab" onclick="tukarTabVisual(this, 3)">3</div>
-                        <div class="tab" onclick="tukarTabVisual(this, 4)">4</div>
-                        <div class="tab" onclick="tukarTabVisual(this, 5)">5</div>
-                    </div>
-                    <div class="glass-panel">
+                    
+                    <div class="glass-panel" style="padding: 15px;">
+                        
                         <div class="media-container" id="video-container" style="display: none;">
                             <video id="display-video" controls><source src="" type="video/mp4"></video>
                         </div>
+                        
+                        <!-- Slider Carousel -->
+                        <div class="carousel-container" id="image-carousel">
+                            <div class="carousel-track" id="carousel-track">
+                                <div class="carousel-slide"><img id="slide-img-1" src="" alt="Slide 1"></div>
+                                <div class="carousel-slide"><img id="slide-img-2" src="" alt="Slide 2"></div>
+                                <div class="carousel-slide"><img id="slide-img-3" src="" alt="Slide 3"></div>
+                                <div class="carousel-slide"><img id="slide-img-4" src="" alt="Slide 4"></div>
+                                <div class="carousel-slide"><img id="slide-img-5" src="" alt="Slide 5"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="carousel-dots" id="carousel-dots">
+                            <div class="dot active" onclick="pindahSlide(0)"></div>
+                            <div class="dot" onclick="pindahSlide(1)"></div>
+                            <div class="dot" onclick="pindahSlide(2)"></div>
+                            <div class="dot" onclick="pindahSlide(3)"></div>
+                            <div class="dot" onclick="pindahSlide(4)"></div>
+                        </div>
+
                         <div id="tab-dynamic-content" style="transition: opacity 0.4s ease, transform 0.4s ease;">
-                            <div class="media-container"><img id="display-gambar" src="" alt="Kad Raya"></div>
                             <p class="intro-text" id="display-intro"></p>
                             <hr style="border-top: 1px dashed var(--glass-border); margin: 25px 0;">
                             <div class="tab-content-wrapper">
@@ -400,6 +502,10 @@
                     <div class="qr-wrapper"><img id="display-qr" src="" alt="QR Code"></div>
                 </div>
             </div>
+        </div>
+        
+        <div class="ad-banner" style="position: static; margin-bottom: 20px;">
+            Nak Buat Website atau Sistem? <br><a href="https://ummars.com" target="_blank">ummars.com</a>
         </div>
     </div>
 
@@ -451,12 +557,37 @@
                 </div>
             </div>
 
-            <!-- Kumpulan 3: Gambar Album / Tab -->
+            <!-- Kumpulan 3: Gambar Kulit Tema (Baru) -->
             <div class="admin-group">
-                <h3><i class="fa-solid fa-images"></i> Gambar Album (Tab 1-5)</h3>
+                <h3><i class="fa-solid fa-palette"></i> Imej Paparan Tema</h3>
+                <div class="form-group">
+                    <label>URL Kulit Tema 1</label>
+                    <input type="text" id="admin-tema-img-1" placeholder="URL Imej...">
+                </div>
+                <div class="form-group">
+                    <label>URL Kulit Tema 2</label>
+                    <input type="text" id="admin-tema-img-2" placeholder="URL Imej...">
+                </div>
+                <div class="form-group">
+                    <label>URL Kulit Tema 3</label>
+                    <input type="text" id="admin-tema-img-3" placeholder="URL Imej...">
+                </div>
+                <div class="form-group">
+                    <label>URL Kulit Tema 4</label>
+                    <input type="text" id="admin-tema-img-4" placeholder="URL Imej...">
+                </div>
+                <div class="form-group">
+                    <label>URL Kulit Tema 5</label>
+                    <input type="text" id="admin-tema-img-5" placeholder="URL Imej...">
+                </div>
+            </div>
+
+            <!-- Kumpulan 4: Gambar Album / Tab -->
+            <div class="admin-group">
+                <h3><i class="fa-solid fa-images"></i> Gambar Album (Slide 1-5)</h3>
                 
                 <div class="form-group">
-                    <label>Gambar Tab 1 (Famili)</label>
+                    <label>Gambar Slide 1 (Famili)</label>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="admin-gambar-1" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-1" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-1')">
@@ -465,7 +596,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Gambar Tab 2</label>
+                    <label>Gambar Slide 2</label>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="admin-gambar-2" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-2" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-2')">
@@ -474,7 +605,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Gambar Tab 3</label>
+                    <label>Gambar Slide 3</label>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="admin-gambar-3" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-3" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-3')">
@@ -483,7 +614,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Gambar Tab 4</label>
+                    <label>Gambar Slide 4</label>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="admin-gambar-4" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-4" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-4')">
@@ -492,7 +623,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Gambar Tab 5</label>
+                    <label>Gambar Slide 5</label>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="admin-gambar-5" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-5" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-5')">
@@ -501,7 +632,7 @@
                 </div>
             </div>
 
-            <!-- Kumpulan 4: Duit Raya QR -->
+            <!-- Kumpulan 5: Duit Raya QR -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-wallet"></i> Duit Raya (QR)</h3>
                 <div class="form-group"><label>Teks Atas QR (Boleh Edit)</label><input type="text" id="admin-qr-text" placeholder="Contoh: Imbas untuk Duit Raya"></div>
@@ -545,7 +676,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBNoZ0Kie6WD-jGpHRMcnLOiEYd4rV4wr0",
@@ -578,6 +709,13 @@
             muzik: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
             qrText: 'Imbas kod QR di bawah untuk pemberian ikhlas. Moga dimurahkan rezeki selalu.',
             qrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=SilaTukarTetapanQR',
+            temaImages: [
+                'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1507608158173-1dcec673a2e5?auto=format&fit=crop&q=80&w=800',
+                'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800'
+            ],
             gambarTabs: [
                 'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800',
                 'https://images.unsplash.com/photo-1563223771-5fe4038fbfc9?auto=format&fit=crop&q=80&w=800', 
@@ -592,22 +730,24 @@
 
         // --- SISTEM AUTOPLAY MUZIK (Dengan User Interaction) ---
         let muzikBermula = false;
-        let penggunaHentiMuzik = false; // Penanda untuk elak Autoplay jika pengguna sengaja tutup muzik
+        let penggunaHentiMuzik = false; 
 
         function cubaMainkanMuzikLatar() {
-            // Hanya autoplay jika belum mula DAN pengguna tak pernah tekan stop
-            if (!muzikBermula && !penggunaHentiMuzik && document.getElementById('page-kad').classList.contains('active')) {
-                let audioEl = document.getElementById("laguRaya");
-                if (audioEl.paused) {
-                    audioEl.play().then(() => {
-                        muzikBermula = true;
-                        let btnMuzik = document.getElementById("btn-muzik");
-                        let ikonMuzik = document.getElementById("ikon-muzik");
-                        if(btnMuzik) btnMuzik.classList.add('active');
-                        if(ikonMuzik) ikonMuzik.classList.add('fa-spin');
-                    }).catch(err => {
-                        console.log("Autoplay dihalang oleh pelayar:", err);
-                    });
+            let pageKad = document.getElementById('page-kad');
+            if(pageKad && pageKad.classList.contains('active')) {
+                if (!muzikBermula && !penggunaHentiMuzik) {
+                    let audioEl = document.getElementById("laguRaya");
+                    if (audioEl && audioEl.paused) {
+                        audioEl.play().then(() => {
+                            muzikBermula = true;
+                            let btnMuzik = document.getElementById("btn-muzik");
+                            let ikonMuzik = document.getElementById("ikon-muzik");
+                            if(btnMuzik) btnMuzik.classList.add('active');
+                            if(ikonMuzik) ikonMuzik.classList.add('fa-spin');
+                        }).catch(err => {
+                            console.log("Autoplay dihalang oleh pelayar:", err);
+                        });
+                    }
                 }
             }
         }
@@ -670,12 +810,15 @@
                 if(!kadData.tajukUtama) kadData.tajukUtama = defaultData.tajukUtama;
                 if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
                 if(!kadData.muzik) kadData.muzik = defaultData.muzik;
-                
+                if(!kadData.temaImages) kadData.temaImages = defaultData.temaImages;
+                if(!kadData.ucapanList) kadData.ucapanList = [];
+
                 document.getElementById('nav-owner-controls').style.display = 'none';
                 
                 window.terapkanTema(kadData.tema);
                 muatUIEditorKad();
                 paparHalaman('page-kad');
+                setupRealtimeUcapan(); 
                 
             } catch (e) {
                 console.error("Ralat muat kad tetamu:", e);
@@ -686,24 +829,31 @@
         // --- PENGURUSAN STATE & UI ---
         function paparHalaman(pageId) {
             document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
+            
+            const pageEl = document.getElementById(pageId);
+            if (pageEl) {
+                 pageEl.classList.add('active');
+            }
             
             let bottomNav = document.getElementById('bottom-nav-bar');
+            let displayVideo = document.getElementById('display-video');
+            let audioEl = document.getElementById("laguRaya");
+            
             if(pageId === 'page-kad') {
-                bottomNav.classList.add('active');
+                if(bottomNav) bottomNav.classList.add('active');
+                if(!isGuestMode) initSlider(); 
             } else {
-                bottomNav.classList.remove('active');
-                document.getElementById('display-video').pause();
+                if(bottomNav) bottomNav.classList.remove('active');
+                if(displayVideo) displayVideo.pause();
                 
-                // Jeda muzik juga bila keluar dari kad dan reset penanda autoplay
-                let audioEl = document.getElementById("laguRaya");
-                let btnMuzik = document.getElementById("btn-muzik");
-                let ikonMuzik = document.getElementById("ikon-muzik");
-                if (!audioEl.paused) {
+                if (audioEl && !audioEl.paused) {
                     audioEl.pause();
                 }
                 muzikBermula = false;
-                penggunaHentiMuzik = false; // Reset supaya ia akan autoplay jika masuk balik
+                penggunaHentiMuzik = false; 
+                
+                let btnMuzik = document.getElementById("btn-muzik");
+                let ikonMuzik = document.getElementById("ikon-muzik");
                 if(btnMuzik) btnMuzik.classList.remove('active');
                 if(ikonMuzik) ikonMuzik.classList.remove('fa-spin');
             }
@@ -729,37 +879,38 @@
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #FFF176, #FFB300)');
                 root.style.setProperty('--glass-bg', 'rgba(6, 61, 30, 0.25)');
                 root.style.setProperty('--glass-border', 'rgba(255, 223, 0, 0.35)');
-                bgAnimated.style.background = 'radial-gradient(circle at top right, #0a4f26 0%, #011409 100%)';
+                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #0a4f26 0%, #011409 100%)';
             } else if(temaId === 'tema2') {
                 root.style.setProperty('--primary-yellow', '#64ffda');
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #a7ffeb, #1de9b6)');
                 root.style.setProperty('--glass-bg', 'rgba(13, 37, 63, 0.4)');
                 root.style.setProperty('--glass-border', 'rgba(100, 255, 218, 0.35)');
-                bgAnimated.style.background = 'radial-gradient(circle at top right, #0d253f 0%, #020c1b 100%)';
+                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #0d253f 0%, #020c1b 100%)';
             } else if(temaId === 'tema3') {
                 root.style.setProperty('--primary-yellow', '#ffd700');
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #ffea00, #ffb300)');
                 root.style.setProperty('--glass-bg', 'rgba(74, 14, 14, 0.4)');
                 root.style.setProperty('--glass-border', 'rgba(255, 215, 0, 0.35)');
-                bgAnimated.style.background = 'radial-gradient(circle at top right, #4a0e0e 0%, #170202 100%)';
+                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #4a0e0e 0%, #170202 100%)';
             } else if(temaId === 'tema4') {
                 root.style.setProperty('--primary-yellow', '#ffea00');
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #ffff8d, #ffea00)');
                 root.style.setProperty('--glass-bg', 'rgba(179, 89, 0, 0.3)');
                 root.style.setProperty('--glass-border', 'rgba(255, 234, 0, 0.35)');
-                bgAnimated.style.background = 'radial-gradient(circle at top right, #b35900 0%, #2e1100 100%)';
+                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #b35900 0%, #2e1100 100%)';
             } else if(temaId === 'tema5') {
                 root.style.setProperty('--primary-yellow', '#e0b0ff');
                 root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #f3e5f5, #e0b0ff)');
                 root.style.setProperty('--glass-bg', 'rgba(59, 28, 84, 0.4)');
                 root.style.setProperty('--glass-border', 'rgba(224, 176, 255, 0.35)');
-                bgAnimated.style.background = 'radial-gradient(circle at top right, #3b1c54 0%, #11051c 100%)';
+                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #3b1c54 0%, #11051c 100%)';
             }
         };
 
         window.pilihTema = async (temaId) => {
             document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
-            document.getElementById('card-' + temaId).classList.add('selected');
+            const cardEl = document.getElementById('card-' + temaId);
+            if(cardEl) cardEl.classList.add('selected');
             
             kadData.tema = temaId;
             window.terapkanTema(temaId);
@@ -774,7 +925,7 @@
 
         // --- FUNGSI SUPER ADMIN ---
         window.logMasukSuperAdmin = () => {
-            let pwd = prompt("Sila masukkan kata laluan admin ");
+            let pwd = prompt("Sila masukkan kata laluan admin:");
             if (pwd === "draxter1982" || pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 muatSenaraiPengguna();
@@ -788,6 +939,7 @@
         async function muatSenaraiPengguna() {
             let container = document.getElementById('admin-user-list');
             let totalEl = document.getElementById('admin-total-users');
+            if(!container) return;
             container.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
 
             try {
@@ -800,11 +952,11 @@
                     let pautanText = data.customUrl ? `Pautan: ${data.customUrl}` : `ID: ${uid.substring(0, 10)}...`;
                     htmlStr += `<div class="admin-user-item"><div><strong>${data.nama || 'Tiada Nama'}</strong><br><small>${pautanText}</small></div><button class="btn-delete" onclick="padamPenggunaData('${uid}')" title="Padam Data"><i class="fa-solid fa-trash"></i></button></div>`;
                 });
-                totalEl.innerText = count;
+                if(totalEl) totalEl.innerText = count;
                 container.innerHTML = count > 0 ? htmlStr : '<p style="color:rgba(255,255,255,0.5);">Tiada pendaftaran setakat ini.</p>';
             } catch (e) {
                 console.error("Ralat muat senarai:", e);
-                totalEl.innerText = "3 (Mod Demo)";
+                if(totalEl) totalEl.innerText = "3 (Mod Demo)";
                 container.innerHTML = `<div style="background: rgba(255, 59, 48, 0.2); border-left: 4px solid #ff3b30; padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 0.85rem;"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Akses Pangkalan Data Disekat</strong><br>Untuk memaparkan data sebenar, sila kemas kini <em>Firestore Rules</em> anda.</div><div class="admin-user-item"><div><strong>Ahmad (Demo)</strong><br><small>ID: demo_ahmad_123</small></div><button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button></div>`;
             }
         }
@@ -827,11 +979,13 @@
                 console.error("Ralat Log Masuk Firebase:", error);
                 if(confirm("Ralat Log Masuk: " + error.message + "\n\nAdakah anda ingin log masuk menggunakan akaun Demo (Mock Login) untuk menguji antaramuka?")) {
                     currentUserInfo = { uid: 'demo_user_123', displayName: 'Pengguna Demo' };
-                    document.getElementById('dash-nama-user').innerText = currentUserInfo.displayName;
+                    let dashName = document.getElementById('dash-nama-user');
+                    if(dashName) dashName.innerText = currentUserInfo.displayName;
                     kadData = { ...defaultData, nama: currentUserInfo.displayName }; 
                     window.terapkanTema(kadData.tema);
                     document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
-                    document.getElementById('card-' + kadData.tema).classList.add('selected');
+                    let activeCard = document.getElementById('card-' + kadData.tema);
+                    if(activeCard) activeCard.classList.add('selected');
                     paparHalaman('page-dashboard');
                 } else {
                     paparHalaman('page-login');
@@ -862,19 +1016,56 @@
                     if(!kadData.tajukUtama) kadData.tajukUtama = defaultData.tajukUtama;
                     if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
                     if(!kadData.muzik) kadData.muzik = defaultData.muzik;
+                    if(!kadData.temaImages) kadData.temaImages = defaultData.temaImages;
+                    if(!kadData.ucapanList) kadData.ucapanList = [];
                 } else {
                     kadData = { ...defaultData, nama: currentUserInfo.displayName || 'Pengguna' };
                     await setDoc(docRef, kadData);
                 }
+                
+                for(let i=0; i<5; i++){
+                    let imgEl = document.getElementById(`preview-tema${i+1}`);
+                    if(imgEl && kadData.temaImages && kadData.temaImages[i]) imgEl.src = kadData.temaImages[i];
+                }
+
                 window.terapkanTema(kadData.tema);
                 document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
                 let validThemeId = document.getElementById('card-' + kadData.tema) ? kadData.tema : 'tema1';
-                document.getElementById('card-' + validThemeId).classList.add('selected');
+                let validCard = document.getElementById('card-' + validThemeId);
+                if(validCard) validCard.classList.add('selected');
+                
+                setupRealtimeUcapan();
             } catch (e) {
                 alert("Firestore disekat. Menggunakan data memori sementara.");
                 kadData = { ...defaultData, nama: currentUserInfo.displayName }; 
                 window.terapkanTema(kadData.tema);
             }
+        }
+
+        // --- REALTIME LISTENER UNTUK UCAPAN ---
+        let unsubscribeUcapan = null;
+        function setupRealtimeUcapan() {
+            let targetUid = isGuestMode ? viewingSharedId : (currentUserInfo ? currentUserInfo.uid : null);
+            if (!targetUid || targetUid === 'demo_user_123') {
+                paparSenaraiUcapan(); 
+                return;
+            }
+            
+            if (unsubscribeUcapan) unsubscribeUcapan();
+            
+            const docRef = doc(db, "users_kad_raya", targetUid);
+            unsubscribeUcapan = onSnapshot(docRef, (doc) => {
+                if (doc.exists()) {
+                    let data = doc.data();
+                    if (data.ucapanList) {
+                        kadData.ucapanList = data.ucapanList;
+                        paparSenaraiUcapan();
+                    }
+                }
+            }, (error) => {
+                console.error("Gagal dengar ucapan", error);
+                paparSenaraiUcapan(); 
+            });
         }
 
         // --- FUNGSI PEMAMPATAN GAMBAR (COMPRESSION) ---
@@ -909,7 +1100,7 @@
             });
         }
 
-        // --- FUNGSI MUAT NAIK GAMBAR KE IMGBB & FIRESTORE (BASE64 FALLBACK) ---
+        // --- FUNGSI MUAT NAIK GAMBAR KE IMGBB (FALLBACK BASE64) ---
         const IMGBB_API_KEY = "6798038ccbf65a121ef37651a21db597"; 
 
         window.muatNaikGambar = async (inputElement, targetId) => {
@@ -923,16 +1114,15 @@
             }
 
             const targetInput = document.getElementById(targetId);
+            if(!targetInput) return;
             const oriPlaceholder = targetInput.placeholder;
             targetInput.value = '';
             targetInput.placeholder = "Memampat & memuat naik...";
 
             try {
-                // 1. Mampatkan Gambar Pertama Sekali (Penting untuk jimat data awan)
                 const base64DataUrl = await mampatGambar(file);
                 const base64String = base64DataUrl.split(',')[1];
                 
-                // 2. Cuba hantar Base64 ini ke ImgBB
                 const formData = new FormData();
                 formData.append("image", base64String);
                 
@@ -952,9 +1142,6 @@
                 
             } catch(e) {
                 console.warn("Gagal muat naik ke pelayan awan, menggunakan kaedah sandaran pintar (Base64)...", e);
-                
-                // 3. Kaedah Sandaran (Fallback): Guna Base64 yang dimampatkan
-                // Oleh kerana ia dimampatkan (saiz ~100kb), ia SELAMAT untuk disimpan ke dalam Firestore tanpa ralat "data penuh"
                 try {
                     const compressedBase64 = await mampatGambar(file);
                     targetInput.value = compressedBase64;
@@ -979,21 +1166,42 @@
             let cUrl = document.getElementById('admin-custom-url').value;
             kadData.customUrl = cUrl ? cUrl.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase() : '';
             
-            kadData.gambarTabs = [];
-            for(let i=1; i<=5; i++) kadData.gambarTabs.push(document.getElementById('admin-gambar-'+i).value);
+            if(!kadData.gambarTabs) kadData.gambarTabs = [];
+            for(let i=1; i<=5; i++) {
+                let imgVal = document.getElementById('admin-gambar-'+i).value;
+                kadData.gambarTabs[i-1] = imgVal || defaultData.gambarTabs[i-1];
+            }
+            
+            if(!kadData.temaImages) kadData.temaImages = [];
+            for(let i=1; i<=5; i++) {
+                 let tImgVal = document.getElementById('admin-tema-img-'+i).value;
+                 kadData.temaImages[i-1] = tImgVal || defaultData.temaImages[i-1];
+            }
             
             kadData.qrText = document.getElementById('admin-qr-text').value || defaultData.qrText;
             kadData.qrCode = document.getElementById('admin-qr').value || defaultData.qrCode;
 
             if (currentUserInfo && currentUserInfo.uid === 'demo_user_123') {
                 alert("Simulasi Berjaya: Tetapan disimpan sementara.");
-                muatUIEditorKad(); window.tutupAdmin(); return;
+                muatUIEditorKad(); 
+                
+                for(let i=0; i<5; i++){
+                    let imgEl = document.getElementById(`preview-tema${i+1}`);
+                    if(imgEl) imgEl.src = kadData.temaImages[i];
+                }
+                window.tutupAdmin(); return;
             }
 
             try {
                 const docRef = doc(db, "users_kad_raya", currentUserInfo.uid);
                 await setDoc(docRef, kadData, { merge: true });
                 alert("Tetapan berjaya disimpan!");
+                
+                for(let i=0; i<5; i++){
+                    let imgEl = document.getElementById(`preview-tema${i+1}`);
+                    if(imgEl && kadData.temaImages) imgEl.src = kadData.temaImages[i];
+                }
+                
                 muatUIEditorKad(); window.tutupAdmin();
             } catch(e) { 
                 console.error("Gagal simpan:", e);
@@ -1010,14 +1218,20 @@
             let mesej = document.getElementById('input-teks-ucapan').value;
             if (!nama || !mesej) return alert("Sila isi nama dan ucapan anda.");
             
-            kadData.ucapanList.unshift({ nama: nama, mesej: mesej });
+            let newUcapan = { nama: nama, mesej: mesej };
+            let updatedList = [newUcapan, ...(kadData.ucapanList || [])];
+            kadData.ucapanList = updatedList; 
             
             let updateUI = () => {
-                document.getElementById('input-nama-ucapan').value = ''; 
-                document.getElementById('input-teks-ucapan').value = '';
+                let namaInput = document.getElementById('input-nama-ucapan');
+                let teksInput = document.getElementById('input-teks-ucapan');
+                if(namaInput) namaInput.value = ''; 
+                if(teksInput) teksInput.value = '';
                 let container = document.getElementById('senarai-ucapan');
-                container.style.opacity = '0'; 
-                setTimeout(() => { paparSenaraiUcapan(); container.style.opacity = '1'; }, 300);
+                if(container) {
+                    container.style.opacity = '0'; 
+                    setTimeout(() => { paparSenaraiUcapan(); container.style.opacity = '1'; }, 300);
+                }
             };
 
             if (isGuestMode || (currentUserInfo && currentUserInfo.uid === 'demo_user_123')) {
@@ -1046,46 +1260,66 @@
 
         // --- FUNGSI ANTARAMUKA (UI) ---
         function muatUIEditorKad() {
-            document.getElementById('display-tajuk-utama').innerText = kadData.tajukUtama || defaultData.tajukUtama;
-            document.getElementById('display-sub-tajuk').innerText = kadData.subTajuk || defaultData.subTajuk;
-            document.getElementById('display-nama').innerText = kadData.nama;
-            document.getElementById('display-intro').innerText = kadData.intro;
+            let tajukUtama = document.getElementById('display-tajuk-utama');
+            if(tajukUtama) tajukUtama.innerText = kadData.tajukUtama || defaultData.tajukUtama;
+            
+            let subTajuk = document.getElementById('display-sub-tajuk');
+            if(subTajuk) subTajuk.innerText = kadData.subTajuk || defaultData.subTajuk;
+            
+            let nama = document.getElementById('display-nama');
+            if(nama) nama.innerText = kadData.nama;
+            
+            let intro = document.getElementById('display-intro');
+            if(intro) intro.innerText = kadData.intro;
             
             let videoEl = document.getElementById('display-video');
             let videoContainer = document.getElementById('video-container');
-            if (kadData.video && kadData.video.trim() !== '') {
-                videoEl.src = kadData.video; videoContainer.style.display = 'block';
-            } else {
-                videoContainer.style.display = 'none'; videoEl.src = '';
+            if(videoEl && videoContainer) {
+                if (kadData.video && kadData.video.trim() !== '') {
+                    videoEl.src = kadData.video; videoContainer.style.display = 'block';
+                } else {
+                    videoContainer.style.display = 'none'; videoEl.src = '';
+                }
             }
             
             let audioEl = document.getElementById("laguRaya");
-            let audioSource = audioEl.querySelector("source");
-            let isPlaying = !audioEl.paused;
-            
-            if (kadData.muzik && kadData.muzik.trim() !== '') {
-                audioSource.src = kadData.muzik;
-            } else {
-                audioSource.src = defaultData.muzik;
-            }
-            
-            audioEl.load(); 
-            if (isPlaying && !penggunaHentiMuzik) {
-                audioEl.play().catch(e => console.log("Perlu interaksi untuk main:", e));
+            if(audioEl) {
+                let audioSource = audioEl.querySelector("source");
+                let isPlaying = !audioEl.paused;
+                
+                if (kadData.muzik && kadData.muzik.trim() !== '') {
+                    if(audioSource) audioSource.src = kadData.muzik;
+                } else {
+                    if(audioSource) audioSource.src = defaultData.muzik;
+                }
+                
+                audioEl.load(); 
+                if (isPlaying && !penggunaHentiMuzik) {
+                    audioEl.play().catch(e => console.log("Perlu interaksi untuk main:", e));
+                }
             }
 
-            document.getElementById('display-qr-text').innerText = kadData.qrText || defaultData.qrText;
-            document.getElementById('display-qr').src = kadData.qrCode;
+            let qrText = document.getElementById('display-qr-text');
+            if(qrText) qrText.innerText = kadData.qrText || defaultData.qrText;
+            
+            let qrImg = document.getElementById('display-qr');
+            if(qrImg) qrImg.src = kadData.qrCode;
+            
             paparSenaraiUcapan();
             
-            let tabs = document.querySelectorAll('.tab');
-            if(tabs.length > 0) window.tukarTabVisual(tabs[0], 1, false);
+            let pageKad = document.getElementById('page-kad');
+            if(pageKad && pageKad.classList.contains('active')){
+                initSlider();
+            }
         }
 
         function paparSenaraiUcapan() {
-            let container = document.getElementById('senarai-ucapan'); container.innerHTML = '';
+            let container = document.getElementById('senarai-ucapan'); 
+            if(!container) return;
+            container.innerHTML = '';
             if (!kadData.ucapanList || kadData.ucapanList.length === 0) {
-                return container.innerHTML = '<p style="text-align:center; color:rgba(255,255,255,0.5);">Tiada ucapan lagi.</p>';
+                container.innerHTML = '<p style="text-align:center; color:rgba(255,255,255,0.5);">Tiada ucapan lagi.</p>';
+                return;
             }
             kadData.ucapanList.forEach((item, index) => {
                 let div = document.createElement('div'); div.className = 'ucapan-item';
@@ -1102,34 +1336,18 @@
 
         window.kembaliDashboard = () => paparHalaman('page-dashboard');
         
-        window.tukarTabVisual = (element, nombor, denganAnimasi = true) => {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            element.classList.add('active');
-
-            let contentWrapper = document.getElementById('tab-dynamic-content');
-            let tajuk = document.getElementById('tab-title');
-            let pantun = document.getElementById('teks-pantun');
-            let gambar = document.getElementById('display-gambar');
-
-            const updateKandungan = () => {
-                if(kadData.gambarTabs && kadData.gambarTabs[nombor - 1]) gambar.src = kadData.gambarTabs[nombor - 1];
-                if(nombor === 1) { tajuk.innerText = "Famili"; pantun.innerHTML = "Pergi ke pekan membeli ketupat,<br>Singgah sebentar membeli pegaga;<br>Andai ada silap dan khilaf terbuat,<br>Maaf dipinta dari hati sekeluarga."; }
-                else if(nombor === 2) { tajuk.innerText = "Sahabat"; pantun.innerHTML = "Jauh di mata dekat di hati,<br>Salam kemaafan pengganti diri."; }
-                else { tajuk.innerText = "Memori " + nombor; pantun.innerHTML = "Kenangan manis di pagi raya,<br>Kekal terpahat selamanya."; }
-            };
-
-            if (denganAnimasi) {
-                contentWrapper.style.opacity = '0'; contentWrapper.style.transform = 'scale(0.95)';
-                setTimeout(() => { updateKandungan(); contentWrapper.style.opacity = '1'; contentWrapper.style.transform = 'scale(1)'; }, 350); 
-            } else { updateKandungan(); }
-        };
-
         window.tukarViewVisual = (viewId, element) => {
             document.querySelectorAll('.nav-item').forEach(item => { if(item.id !== 'btn-muzik') item.classList.remove('active'); });
             element.classList.add('active');
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-            setTimeout(() => { document.getElementById(viewId).classList.add('active'); }, 50);
-            if(viewId !== 'view-home') document.getElementById('display-video').pause();
+            setTimeout(() => { 
+                let view = document.getElementById(viewId);
+                if(view) view.classList.add('active'); 
+                if(viewId === 'view-home') initSlider(); 
+            }, 50);
+            
+            let video = document.getElementById('display-video');
+            if(viewId !== 'view-home' && video) video.pause();
         };
 
         // Fungsi memuat turun senarai MP3 dari Archive.org
@@ -1137,6 +1355,7 @@
         window.muatSenaraiLaguRaya = async () => {
             if(senaraiLaguDimuat) return;
             const selectEl = document.getElementById('admin-pilihan-lagu');
+            if(!selectEl) return;
             selectEl.innerHTML = '<option value="">-- Memuatkan Senarai Lagu... --</option>';
             try {
                 const res = await fetch('https://archive.org/metadata/lagu-raya-aidilfitri');
@@ -1159,28 +1378,39 @@
         };
 
         window.bukaAdmin = () => {
-            document.getElementById('admin-tajuk-utama').value = kadData.tajukUtama || defaultData.tajukUtama;
-            document.getElementById('admin-sub-tajuk').value = kadData.subTajuk || defaultData.subTajuk;
-            document.getElementById('admin-nama').value = kadData.nama;
-            document.getElementById('admin-intro').value = kadData.intro || '';
-            document.getElementById('admin-video').value = kadData.video || '';
-            document.getElementById('admin-muzik').value = kadData.muzik || '';
-            document.getElementById('admin-custom-url').value = kadData.customUrl || '';
+            let el;
+            if(el = document.getElementById('admin-tajuk-utama')) el.value = kadData.tajukUtama || defaultData.tajukUtama;
+            if(el = document.getElementById('admin-sub-tajuk')) el.value = kadData.subTajuk || defaultData.subTajuk;
+            if(el = document.getElementById('admin-nama')) el.value = kadData.nama;
+            if(el = document.getElementById('admin-intro')) el.value = kadData.intro || '';
+            if(el = document.getElementById('admin-video')) el.value = kadData.video || '';
+            if(el = document.getElementById('admin-muzik')) el.value = kadData.muzik || '';
+            if(el = document.getElementById('admin-custom-url')) el.value = kadData.customUrl || '';
             
-            for(let i=1; i<=5; i++) document.getElementById('admin-gambar-'+i).value = kadData.gambarTabs[i-1] || '';
+            for(let i=1; i<=5; i++) {
+                if(el = document.getElementById('admin-tema-img-'+i)) el.value = (kadData.temaImages && kadData.temaImages[i-1]) ? kadData.temaImages[i-1] : defaultData.temaImages[i-1];
+            }
             
-            document.getElementById('admin-qr-text').value = kadData.qrText || defaultData.qrText;
-            document.getElementById('admin-qr').value = kadData.qrCode || '';
+            for(let i=1; i<=5; i++) {
+                if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultData.gambarTabs[i-1];
+            }
+            
+            if(el = document.getElementById('admin-qr-text')) el.value = kadData.qrText || defaultData.qrText;
+            if(el = document.getElementById('admin-qr')) el.value = kadData.qrCode || '';
             
             window.muatSenaraiLaguRaya();
             
             let modal = document.getElementById('admin-modal');
-            modal.style.display = 'flex'; setTimeout(() => modal.classList.add('active'), 10);
+            if(modal) {
+                modal.style.display = 'flex'; setTimeout(() => modal.classList.add('active'), 10);
+            }
         };
 
         window.tutupAdmin = () => {
             let modal = document.getElementById('admin-modal');
-            modal.classList.remove('active'); setTimeout(() => modal.style.display = 'none', 400);
+            if(modal) {
+                modal.classList.remove('active'); setTimeout(() => modal.style.display = 'none', 400);
+            }
         };
 
         window.toggleMuzikLatar = () => {
@@ -1188,25 +1418,27 @@
             var btnMuzik = document.getElementById("btn-muzik"); 
             var ikonMuzik = document.getElementById("ikon-muzik");
             
-            ikonMuzik.style.transform = 'scale(0.7)'; 
-            setTimeout(() => ikonMuzik.style.transform = '', 200);
+            if(ikonMuzik) {
+                ikonMuzik.style.transform = 'scale(0.7)'; 
+                setTimeout(() => ikonMuzik.style.transform = '', 200);
+            }
             
-            if (audio.paused) { 
+            if (audio && audio.paused) { 
                 audio.play().then(() => {
                     muzikBermula = true;
-                    penggunaHentiMuzik = false; // Reset penanda kerana pengguna sengaja tekan Play
+                    penggunaHentiMuzik = false; 
                 }).catch(e=>{
                     alert("Pelayar web menghalang muzik automatik. Sila interaksi dengan skrin dahulu.");
                 }); 
-                btnMuzik.classList.add('active'); 
-                ikonMuzik.classList.add('fa-spin'); 
+                if(btnMuzik) btnMuzik.classList.add('active'); 
+                if(ikonMuzik) ikonMuzik.classList.add('fa-spin'); 
             } 
-            else { 
+            else if(audio) { 
                 audio.pause(); 
                 muzikBermula = false;
-                penggunaHentiMuzik = true; // Tandakan bahawa pengguna sengaja Stop muzik
-                btnMuzik.classList.remove('active'); 
-                ikonMuzik.classList.remove('fa-spin'); 
+                penggunaHentiMuzik = true; 
+                if(btnMuzik) btnMuzik.classList.remove('active'); 
+                if(ikonMuzik) ikonMuzik.classList.remove('fa-spin'); 
             }
         };
 
