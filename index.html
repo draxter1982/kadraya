@@ -140,21 +140,24 @@
         .home-layout { position: relative; padding: 0;}
         
         /* =======================================
-           ANIMASI & DIMENSI SLIDER CAROUSEL
+           ANIMASI & DIMENSI SLIDER CAROUSEL (AUTO-FIX 4:6)
            ======================================= */
         .carousel-container {
             width: 100%;
-            overflow: visible; /* Penting supaya zoom out tak terpotong teruk */
+            max-width: 320px; /* Kunci lebar supaya tak terlalu besar di PC/Tablet */
+            aspect-ratio: 4 / 6; /* Kunci nisbah keseluruhan ke 4:6 */
+            margin: 0 auto 25px auto; /* Tengah-tengahkan */
+            overflow: visible; /* Penting supaya efek zoom tak terpotong */
             position: relative;
-            margin-bottom: 25px;
         }
 
         .carousel-track {
             display: flex;
+            height: 100%; /* Penuhi bekas 4:6 */
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             width: 100%;
             cursor: grab;
-            align-items: center; /* Pastikan semua slide tengah selari */
+            align-items: center; 
         }
         
         .carousel-track:active {
@@ -163,21 +166,23 @@
 
         .carousel-slide {
             min-width: 100%;
+            height: 100%; /* Penuhi tinggi carousel track */
             flex-shrink: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            aspect-ratio: 4 / 6; /* Nisbah 4:6 mengikut permintaan supaya kekal fix */
-            background-color: #0a0a0a;
-            overflow: hidden; /* Penting untuk efek zum */
+            background-color: transparent; /* Buang bg gelap */
+            position: relative;
         }
 
-        /* Imej di dalam slider - Dimensi Fix 4:6 */
+        /* Imej di dalam slider - Memenuhi ruang dengan betul */
         .carousel-slide img {
+            position: absolute;
+            top: 0; left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Auto crop untuk elak gambar memanjang */
-            object-position: center top; 
+            object-fit: cover; /* Auto crop untuk elak gambar meregang/panjang */
+            object-position: center center; 
             border-radius: 20px;
             display: block;
             border: 3px solid rgba(255,255,255,0.2);
@@ -185,8 +190,8 @@
             
             /* Animasi asal (ketika tidak aktif / sedang slide) */
             transform: scale(0.85); 
-            opacity: 0.5; 
-            filter: blur(2px) brightness(0.7);
+            opacity: 0.4; 
+            filter: blur(2px) brightness(0.6);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
@@ -204,7 +209,7 @@
             display: flex;
             justify-content: center;
             gap: 8px;
-            margin-top: -10px;
+            margin-top: 15px; /* Alih sikit supaya tak sentuh gambar */
             margin-bottom: 20px;
             position: relative;
             z-index: 10;
@@ -221,7 +226,7 @@
         
         .dot.active {
             background-color: var(--primary-yellow);
-            transform: scale(1.2);
+            transform: scale(1.3);
         }
 
         .media-container video { width: 100%; display: block; border-radius: 20px; margin-bottom: 25px; border: 3px solid var(--glass-border); }
@@ -937,7 +942,7 @@
             
             if(pageId === 'page-kad') {
                 if(bottomNav) bottomNav.classList.add('active');
-                if(!isGuestMode && typeof window.initSlider === 'function') window.initSlider(); 
+                if(typeof window.initSlider === 'function') window.initSlider(); 
             } else {
                 if(bottomNav) bottomNav.classList.remove('active');
                 if(displayVideo) displayVideo.pause();
@@ -947,6 +952,8 @@
                 }
                 muzikBermula = false;
                 penggunaHentiMuzik = false; 
+                
+                if(typeof hentikanAutoSlide === 'function') window.hentikanAutoSlide(); // Berhentikan slider
                 
                 let btnMuzik = document.getElementById("btn-muzik");
                 let ikonMuzik = document.getElementById("ikon-muzik");
@@ -1025,7 +1032,6 @@
             if (pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 
-                // Set nilai input untuk imej tema global
                 for(let i=0; i<5; i++) {
                     let el = document.getElementById('global-tema-img-'+(i+1));
                     if(el) el.value = globalTemaImages[i] || '';
@@ -1089,7 +1095,6 @@
             } catch(e) {
                 console.error("Gagal simpan imej tema global:", e);
                 alert("Gagal menyimpan. Sila pastikan Firestore membenarkan penulisan ke 'global_settings'.");
-                // Fallback untuk mod tempatan
                 globalTemaImages = newImages;
                 kemasKiniPaparanImejTema();
             }
@@ -1375,12 +1380,13 @@
             } catch (e) { alert("Gagal hantar ucapan ke pangkalan data."); }
         };
 
-        // --- SISTEM SLIDER / CAROUSEL ---
+        // --- SISTEM SLIDER / CAROUSEL DENGAN AUTOSLIDE ---
         let currentSlide = 0;
         let isDragging = false;
         let startPos = 0;
         let currentTranslate = 0;
         let prevTranslate = 0;
+        let autoSlideInterval;
 
         window.initSlider = () => {
             const track = document.getElementById('carousel-track');
@@ -1394,6 +1400,7 @@
             }
             currentSlide = 0;
             window.updateSliderPosition();
+            window.mulakanAutoSlide();
         };
 
         window.updateSliderPosition = () => {
@@ -1409,18 +1416,16 @@
                 else dot.classList.remove('active');
             });
             
-            // Urus Kelas Aktif untuk Animasi Zum Imej
             const slides = document.querySelectorAll('.carousel-slide');
             slides.forEach((slide, index) => {
                 if(index === currentSlide) slide.classList.add('active-slide');
                 else slide.classList.remove('active-slide');
             });
             
-            // Cetus Animasi Teks Melenting
             const textWrapper = document.getElementById('anim-text-wrapper');
             if (textWrapper) {
                 textWrapper.classList.remove('animate-text-pop');
-                void textWrapper.offsetWidth; // helah CSS untuk memulakan semula animasi
+                void textWrapper.offsetWidth; 
                 textWrapper.classList.add('animate-text-pop');
             }
 
@@ -1436,9 +1441,24 @@
         window.pindahSlide = (index) => {
             currentSlide = index;
             window.updateSliderPosition();
+            window.mulakanAutoSlide(); // reset timer bila user klik
+        };
+        
+        window.mulakanAutoSlide = () => {
+            window.hentikanAutoSlide();
+            autoSlideInterval = setInterval(() => {
+                if(currentSlide < 4) currentSlide++;
+                else currentSlide = 0;
+                window.updateSliderPosition();
+            }, 3500); // Bergerak automatik setiap 3.5 saat
+        };
+        
+        window.hentikanAutoSlide = () => {
+            if(autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+            }
         };
 
-        // Pasang event listener untuk sentuhan/drag
         setTimeout(() => {
             const track = document.getElementById('carousel-track');
             if(track) {
@@ -1454,6 +1474,7 @@
         }, 1000);
 
         function touchStart(event) {
+            window.hentikanAutoSlide(); // Henti autoslide bila user sentuh gambar
             isDragging = true;
             startPos = getPositionX(event);
             const track = document.getElementById('carousel-track');
@@ -1492,6 +1513,7 @@
             if (movedBy > 15 && currentSlide > 0) currentSlide -= 1;
             
             window.updateSliderPosition();
+            window.mulakanAutoSlide(); // Sambung autoslide semula
         }
 
         function getPositionX(event) {
@@ -1580,6 +1602,11 @@
             document.querySelectorAll('.nav-item').forEach(item => { if(item.id !== 'btn-muzik') item.classList.remove('active'); });
             element.classList.add('active');
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            
+            if(viewId !== 'view-home') {
+                window.hentikanAutoSlide(); // Henti autoslide bila bukan di tab utama
+            }
+            
             setTimeout(() => { 
                 let view = document.getElementById(viewId);
                 if(view) view.classList.add('active'); 
@@ -1626,10 +1653,6 @@
             if(el = document.getElementById('admin-video')) el.value = kadData.video || '';
             if(el = document.getElementById('admin-muzik')) el.value = kadData.muzik || '';
             if(el = document.getElementById('admin-custom-url')) el.value = kadData.customUrl || '';
-            
-            for(let i=1; i<=5; i++) {
-                if(el = document.getElementById('admin-tema-img-'+i)) el.value = (kadData.temaImages && kadData.temaImages[i-1]) ? kadData.temaImages[i-1] : defaultTemaImages[i-1];
-            }
             
             for(let i=1; i<=5; i++) {
                 if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultData.gambarTabs[i-1];
