@@ -168,7 +168,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            aspect-ratio: 4 / 10; /* Nisbah 4:10 (Lebih tinggi/panjang) */
+            aspect-ratio: 4 / 10; /* Nisbah 4:10 mengikut permintaan */
             background-color: #0a0a0a;
         }
 
@@ -764,7 +764,6 @@
 
         if (sharedId) {
             isGuestMode = true;
-            // Gunakan mod tempatan untuk elak ralat jika Firestore belum sedia
             muatKadTetamu(sharedId);
         } else {
             onAuthStateChanged(auth, async (user) => {
@@ -804,19 +803,12 @@
                         kadData = foundDoc.data();
                         viewingSharedId = foundDoc.id; 
                     } else {
-                        // Jika tak jumpa juga di Firestore, gunakan data lalai sementara
-                        console.warn("Kad tidak dijumpai di Firestore.");
-                        kadData = { ...defaultData, nama: 'Tetamu' };
-                        viewingSharedId = uid_or_customUrl;
+                        alert("Maaf, pautan kad ini tidak sah atau telah dipadam.");
+                        window.location.href = window.location.href.split('?')[0]; 
+                        return;
                     }
                 }
-            } catch (e) {
-                console.error("Ralat muat kad tetamu:", e);
-                // Fallback kepada data lalai jika akses disekat
-                kadData = { ...defaultData, nama: 'Tetamu' };
-                viewingSharedId = uid_or_customUrl;
-            } finally {
-                // Pastikan data lengkap untuk mengelak ralat UI
+
                 if(!kadData.tema) kadData.tema = 'tema1';
                 if(!kadData.qrText) kadData.qrText = defaultData.qrText;
                 if(!kadData.tajukUtama) kadData.tajukUtama = defaultData.tajukUtama;
@@ -832,6 +824,10 @@
                 muatUIEditorKad();
                 paparHalaman('page-kad');
                 setupRealtimeUcapan(); 
+                
+            } catch (e) {
+                console.error("Ralat muat kad tetamu:", e);
+                alert("Gagal memuatkan kad. Sila pastikan sambungan internet anda stabil.");
             }
         }
 
@@ -935,7 +931,7 @@
         // --- FUNGSI SUPER ADMIN ---
         window.logMasukSuperAdmin = () => {
             let pwd = prompt("Sila masukkan kata laluan admin (Demo: admin123):");
-            if (pwd === "admin123" || pwd === "draxter1982") {
+            if (pwd === "draxter1982" || pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 muatSenaraiPengguna();
             } else if (pwd !== null) {
@@ -1279,6 +1275,115 @@
                 updateUI();
             } catch (e) { alert("Gagal hantar ucapan ke pangkalan data."); }
         };
+
+        // --- SISTEM SLIDER / CAROUSEL ---
+        let currentSlide = 0;
+        let isDragging = false;
+        let startPos = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+
+        window.initSlider = () => {
+            const track = document.getElementById('carousel-track');
+            if(!track) return;
+            
+            for(let i=0; i<5; i++) {
+                let img = document.getElementById(`slide-img-${i+1}`);
+                if(img && kadData && kadData.gambarTabs) {
+                    img.src = kadData.gambarTabs[i] || defaultData.gambarTabs[i];
+                }
+            }
+            currentSlide = 0;
+            window.updateSliderPosition();
+        };
+
+        window.updateSliderPosition = () => {
+            const track = document.getElementById('carousel-track');
+            if(!track) return;
+            
+            currentTranslate = currentSlide * -100;
+            prevTranslate = currentTranslate;
+            track.style.transform = `translateX(${currentTranslate}%)`;
+            
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                if(index === currentSlide) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+            
+            let tajuk = document.getElementById('tab-title');
+            let pantun = document.getElementById('teks-pantun');
+            if(tajuk && pantun) {
+                if(currentSlide === 0) { tajuk.innerText = "Famili"; pantun.innerHTML = "Pergi ke pekan membeli ketupat,<br>Singgah sebentar membeli pegaga;<br>Andai ada silap dan khilaf terbuat,<br>Maaf dipinta dari hati sekeluarga."; }
+                else if(currentSlide === 1) { tajuk.innerText = "Sahabat"; pantun.innerHTML = "Jauh di mata dekat di hati,<br>Salam kemaafan pengganti diri."; }
+                else { tajuk.innerText = "Memori " + (currentSlide+1); pantun.innerHTML = "Kenangan manis di pagi raya,<br>Kekal terpahat selamanya."; }
+            }
+        };
+
+        window.pindahSlide = (index) => {
+            currentSlide = index;
+            window.updateSliderPosition();
+        };
+
+        // Pasang event listener untuk sentuhan/drag
+        setTimeout(() => {
+            const track = document.getElementById('carousel-track');
+            if(track) {
+                track.addEventListener('touchstart', touchStart, {passive: true});
+                track.addEventListener('touchend', touchEnd);
+                track.addEventListener('touchmove', touchMove, {passive: true});
+
+                track.addEventListener('mousedown', touchStart);
+                track.addEventListener('mouseup', touchEnd);
+                track.addEventListener('mouseleave', () => { if(isDragging) touchEnd(); });
+                track.addEventListener('mousemove', touchMove);
+            }
+        }, 1000);
+
+        function touchStart(event) {
+            isDragging = true;
+            startPos = getPositionX(event);
+            const track = document.getElementById('carousel-track');
+            if(track) track.style.transition = 'none'; 
+        }
+
+        function touchMove(event) {
+            if (isDragging) {
+                const track = document.getElementById('carousel-track');
+                if(!track) return;
+                const currentPosition = getPositionX(event);
+                const diff = (currentPosition - startPos) / track.offsetWidth * 100;
+                let target = prevTranslate + diff;
+                if(target > 10) target = 10; 
+                if(target < -410) target = -410; 
+                track.style.transform = `translateX(${target}%)`;
+            }
+        }
+
+        function touchEnd() {
+            if(!isDragging) return;
+            isDragging = false;
+            const track = document.getElementById('carousel-track');
+            if(!track) return;
+            
+            let transformValue = track.style.transform;
+            let movedBy = 0;
+            if(transformValue.includes('translateX')) {
+                let val = parseFloat(transformValue.replace(/[^\d.-]/g, ''));
+                movedBy = val - prevTranslate;
+            }
+            
+            track.style.transition = 'transform 0.3s ease-in-out';
+            
+            if (movedBy < -15 && currentSlide < 4) currentSlide += 1;
+            if (movedBy > 15 && currentSlide > 0) currentSlide -= 1;
+            
+            window.updateSliderPosition();
+        }
+
+        function getPositionX(event) {
+            return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+        }
+
 
         // --- FUNGSI ANTARAMUKA (UI) ---
         function muatUIEditorKad() {
