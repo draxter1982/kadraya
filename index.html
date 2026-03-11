@@ -153,7 +153,7 @@
 
         .carousel-track {
             display: flex;
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             width: 100%;
             cursor: grab;
         }
@@ -168,15 +168,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            aspect-ratio: 4 / 10; /* Nisbah 4:6mengikut permintaan */
+            aspect-ratio: 4 / 10; /* Nisbah 4:10 mengikut permintaan */
             background-color: #0a0a0a;
+            overflow: hidden; /* Penting untuk efek zum */
         }
 
+        /* EFEK ANIMASI 1: Fokus Imej (Zoom-out Lembut) */
         .carousel-slide img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
+            transform: scale(1.15); /* Asalnya besar sedikit */
+            opacity: 0.4; /* Agak gelap bila tidak aktif */
+            transition: transform 0.8s cubic-bezier(0.21, 1.11, 0.81, 0.99), opacity 0.8s ease;
+        }
+        
+        .carousel-slide.active-slide img {
+            transform: scale(1); /* Zum perlahan-lahan kembali ke normal */
+            opacity: 1; /* Menjadi terang benderang */
         }
         
         /* Navigation Dots */
@@ -206,7 +216,22 @@
 
         .media-container video { width: 100%; display: block; border-radius: 20px; margin-bottom: 25px; border: 3px solid var(--glass-border); }
         .intro-text { font-size: 1.05rem; line-height: 1.6; margin-bottom: 25px; font-weight: 400; text-align: center; color: #f9fafb; }
-        .tab-content-wrapper { transition: all 0.4s ease; text-align: center; }
+        
+        /* EFEK ANIMASI 2: Teks Melenting (Bounce Pop-up) */
+        .tab-content-wrapper { 
+            text-align: center; 
+            opacity: 0; /* Mula sebagai tersembunyi untuk reset animasi */
+        }
+        
+        .animate-text-pop {
+            animation: bouncePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        @keyframes bouncePop {
+            0% { transform: translateY(30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
         .tab-content-wrapper h2 { font-family: var(--font-heading); color: var(--primary-yellow); font-size: 1.6rem; margin-bottom: 15px; transition: color 0.8s ease;}
         .pantun { font-size: 1rem; line-height: 1.8; font-weight: 400; color: #e5e7eb; font-style: italic; }
 
@@ -344,6 +369,52 @@
             <p>Urus pendaftaran pengguna platform.</p>
         </div>
 
+        <!-- Tetapan Imej Tema Global -->
+        <div class="glass-panel" style="margin: 0 20px 20px 20px;">
+             <h3 style="color: var(--primary-yellow); margin-bottom: 15px; font-weight: 500;"><i class="fa-solid fa-palette"></i> Tetapan Imej Tema Global</h3>
+             <div class="form-group" style="margin-bottom: 10px;">
+                <label>URL Kulit Tema 1</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="global-tema-img-1" placeholder="URL Imej...">
+                    <input type="file" id="file-global-tema-1" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'global-tema-img-1')">
+                    <button type="button" class="btn-upload" onclick="document.getElementById('file-global-tema-1').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>URL Kulit Tema 2</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="global-tema-img-2" placeholder="URL Imej...">
+                    <input type="file" id="file-global-tema-2" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'global-tema-img-2')">
+                    <button type="button" class="btn-upload" onclick="document.getElementById('file-global-tema-2').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>URL Kulit Tema 3</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="global-tema-img-3" placeholder="URL Imej...">
+                    <input type="file" id="file-global-tema-3" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'global-tema-img-3')">
+                    <button type="button" class="btn-upload" onclick="document.getElementById('file-global-tema-3').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>URL Kulit Tema 4</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="global-tema-img-4" placeholder="URL Imej...">
+                    <input type="file" id="file-global-tema-4" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'global-tema-img-4')">
+                    <button type="button" class="btn-upload" onclick="document.getElementById('file-global-tema-4').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>URL Kulit Tema 5</label>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="global-tema-img-5" placeholder="URL Imej...">
+                    <input type="file" id="file-global-tema-5" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'global-tema-img-5')">
+                    <button type="button" class="btn-upload" onclick="document.getElementById('file-global-tema-5').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
+                </div>
+            </div>
+            <button class="btn-action" onclick="simpanImejTemaGlobal()" style="padding: 10px; font-size: 0.9rem;">Simpan Imej Tema</button>
+        </div>
+
         <div class="glass-panel" style="margin: 0 20px;">
             <h3 style="color: var(--primary-yellow); margin-bottom: 10px; font-weight: 500;">Jumlah Pengguna</h3>
             <h1 id="admin-total-users" style="font-size: 3.5rem; margin-bottom: 25px; font-family: var(--font-heading);">0</h1>
@@ -478,7 +549,8 @@
                         <div id="tab-dynamic-content" style="transition: opacity 0.4s ease, transform 0.4s ease;">
                             <p class="intro-text" id="display-intro"></p>
                             <hr style="border-top: 1px dashed var(--glass-border); margin: 25px 0;">
-                            <div class="tab-content-wrapper">
+                            <!-- Bekas untuk teks beranimasi (Bouncy Pop-up) -->
+                            <div class="tab-content-wrapper" id="anim-text-wrapper">
                                 <h2 id="tab-title">Famili</h2>
                                 <p class="pantun" id="teks-pantun"></p>
                             </div>
@@ -557,31 +629,6 @@
                         <input type="text" id="admin-custom-url" placeholder="cth: keluarga-zahidi" style="border:none; border-bottom:none; border-radius:0; padding:15px 5px; background: transparent; width:100%; color: white;" oninput="this.value = this.value.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase()">
                     </div>
                     <small style="color: #888; font-size: 0.7rem; display: block; margin-top: 5px;">Hanya huruf, nombor dan sengkang (-) dibenarkan.</small>
-                </div>
-            </div>
-
-            <!-- Kumpulan 3: Gambar Kulit Tema (Baru) -->
-            <div class="admin-group">
-                <h3><i class="fa-solid fa-palette"></i> Imej Paparan Tema</h3>
-                <div class="form-group">
-                    <label>URL Kulit Tema 1</label>
-                    <input type="text" id="admin-tema-img-1" placeholder="URL Imej...">
-                </div>
-                <div class="form-group">
-                    <label>URL Kulit Tema 2</label>
-                    <input type="text" id="admin-tema-img-2" placeholder="URL Imej...">
-                </div>
-                <div class="form-group">
-                    <label>URL Kulit Tema 3</label>
-                    <input type="text" id="admin-tema-img-3" placeholder="URL Imej...">
-                </div>
-                <div class="form-group">
-                    <label>URL Kulit Tema 4</label>
-                    <input type="text" id="admin-tema-img-4" placeholder="URL Imej...">
-                </div>
-                <div class="form-group">
-                    <label>URL Kulit Tema 5</label>
-                    <input type="text" id="admin-tema-img-5" placeholder="URL Imej...">
                 </div>
             </div>
 
@@ -700,6 +747,8 @@
         let kadData = null;
         let isGuestMode = false; 
         let viewingSharedId = null;
+        
+        let globalTemaImages = [];
 
         const defaultData = {
             tajukUtama: 'Selamat Hari Raya Aidilfitri',
@@ -730,6 +779,14 @@
                 { nama: 'Admin', mesej: 'Selamat datang ke kad digital anda!' }
             ]
         };
+        
+        const defaultTemaImages = [
+            'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1507608158173-1dcec673a2e5?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800'
+        ];
 
         // --- SISTEM AUTOPLAY MUZIK (Dengan User Interaction) ---
         let muzikBermula = false;
@@ -764,9 +821,12 @@
 
         if (sharedId) {
             isGuestMode = true;
-            muatKadTetamu(sharedId);
+            muatImejTemaGlobal().then(() => {
+                muatKadTetamu(sharedId);
+            });
         } else {
             onAuthStateChanged(auth, async (user) => {
+                await muatImejTemaGlobal();
                 if (user) {
                     currentUserInfo = user;
                     let dashName = document.getElementById('dash-nama-user');
@@ -782,6 +842,32 @@
                     }
                 }
             });
+        }
+        
+        // --- MUAT IMEJ TEMA GLOBAL ---
+        async function muatImejTemaGlobal() {
+            try {
+                const docRef = doc(db, "global_settings", "tema_images");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().images) {
+                    globalTemaImages = docSnap.data().images;
+                } else {
+                    globalTemaImages = [...defaultTemaImages];
+                }
+            } catch(e) {
+                console.log("Gagal muat imej tema global, guna default.");
+                globalTemaImages = [...defaultTemaImages];
+            }
+            kemasKiniPaparanImejTema();
+        }
+        
+        function kemasKiniPaparanImejTema() {
+            for(let i=0; i<5; i++){
+                let imgEl = document.getElementById(`preview-tema${i+1}`);
+                if(imgEl && globalTemaImages[i]) {
+                    imgEl.src = globalTemaImages[i];
+                }
+            }
         }
 
         // --- FUNGSI TETAMU (MELIHAT PAUTAN KONGSI) ---
@@ -814,7 +900,6 @@
                 if(!kadData.tajukUtama) kadData.tajukUtama = defaultData.tajukUtama;
                 if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
                 if(!kadData.muzik) kadData.muzik = defaultData.muzik;
-                if(!kadData.temaImages) kadData.temaImages = defaultData.temaImages;
                 if(!kadData.ucapanList) kadData.ucapanList = [];
 
                 let navOwner = document.getElementById('nav-owner-controls');
@@ -846,7 +931,7 @@
             
             if(pageId === 'page-kad') {
                 if(bottomNav) bottomNav.classList.add('active');
-                if(!isGuestMode && typeof window.initSlider === 'function') window.initSlider(); 
+                if(typeof window.initSlider === 'function') window.initSlider(); 
             } else {
                 if(bottomNav) bottomNav.classList.remove('active');
                 if(displayVideo) displayVideo.pause();
@@ -933,6 +1018,13 @@
             let pwd = prompt("Sila masukkan kata laluan admin (Demo: admin123):");
             if (pwd === "draxter1982" || pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
+                
+                // Set nilai input untuk imej tema global
+                for(let i=0; i<5; i++) {
+                    let el = document.getElementById('global-tema-img-'+(i+1));
+                    if(el) el.value = globalTemaImages[i] || '';
+                }
+                
                 muatSenaraiPengguna();
             } else if (pwd !== null) {
                 alert("Kata laluan salah.");
@@ -972,6 +1064,27 @@
                     await deleteDoc(doc(db, "users_kad_raya", uid));
                     alert("Data berjaya dipadamkan."); muatSenaraiPengguna(); 
                 } catch (e) { alert("Gagal memadam data. " + e.message); }
+            }
+        };
+        
+        window.simpanImejTemaGlobal = async () => {
+            let newImages = [];
+            for(let i=1; i<=5; i++) {
+                let val = document.getElementById('global-tema-img-'+i).value;
+                newImages.push(val || defaultTemaImages[i-1]);
+            }
+            
+            try {
+                const docRef = doc(db, "global_settings", "tema_images");
+                await setDoc(docRef, { images: newImages }, { merge: true });
+                globalTemaImages = newImages;
+                kemasKiniPaparanImejTema();
+                alert("Imej tema global berjaya dikemas kini!");
+            } catch(e) {
+                console.error("Gagal simpan imej tema global:", e);
+                alert("Gagal menyimpan. Sila pastikan Firestore membenarkan penulisan ke 'global_settings'.");
+                globalTemaImages = newImages;
+                kemasKiniPaparanImejTema();
             }
         };
 
@@ -1019,16 +1132,10 @@
                     if(!kadData.tajukUtama) kadData.tajukUtama = defaultData.tajukUtama;
                     if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
                     if(!kadData.muzik) kadData.muzik = defaultData.muzik;
-                    if(!kadData.temaImages) kadData.temaImages = defaultData.temaImages;
                     if(!kadData.ucapanList) kadData.ucapanList = [];
                 } else {
                     kadData = { ...defaultData, nama: currentUserInfo.displayName || 'Pengguna' };
                     await setDoc(docRef, kadData);
-                }
-                
-                for(let i=0; i<5; i++){
-                    let imgEl = document.getElementById(`preview-tema${i+1}`);
-                    if(imgEl && kadData.temaImages && kadData.temaImages[i]) imgEl.src = kadData.temaImages[i];
                 }
 
                 window.terapkanTema(kadData.tema);
@@ -1190,23 +1297,12 @@
                 kadData.gambarTabs[i-1] = imgVal || defaultData.gambarTabs[i-1];
             }
             
-            if(!kadData.temaImages) kadData.temaImages = [];
-            for(let i=1; i<=5; i++) {
-                 let tImgVal = document.getElementById('admin-tema-img-'+i).value;
-                 kadData.temaImages[i-1] = tImgVal || defaultData.temaImages[i-1];
-            }
-            
             kadData.qrText = document.getElementById('admin-qr-text').value || defaultData.qrText;
             kadData.qrCode = document.getElementById('admin-qr').value || defaultData.qrCode;
 
             if (currentUserInfo && currentUserInfo.uid === 'demo_user_123') {
                 alert("Simulasi Berjaya: Tetapan disimpan sementara.");
                 muatUIEditorKad(); 
-                
-                for(let i=0; i<5; i++){
-                    let imgEl = document.getElementById(`preview-tema${i+1}`);
-                    if(imgEl) imgEl.src = kadData.temaImages[i];
-                }
                 window.tutupAdmin(); return;
             }
 
@@ -1214,11 +1310,6 @@
                 const docRef = doc(db, "users_kad_raya", currentUserInfo.uid);
                 await setDoc(docRef, kadData, { merge: true });
                 alert("Tetapan berjaya disimpan!");
-                
-                for(let i=0; i<5; i++){
-                    let imgEl = document.getElementById(`preview-tema${i+1}`);
-                    if(imgEl && kadData.temaImages) imgEl.src = kadData.temaImages[i];
-                }
                 
                 muatUIEditorKad(); window.tutupAdmin();
             } catch(e) { 
@@ -1245,10 +1336,10 @@
                 let teksInput = document.getElementById('input-teks-ucapan');
                 if(namaInput) namaInput.value = ''; 
                 if(teksInput) teksInput.value = '';
+                
                 let container = document.getElementById('senarai-ucapan');
                 if(container) {
-                    container.style.opacity = '0'; 
-                    setTimeout(() => { paparSenaraiUcapan(); container.style.opacity = '1'; }, 300);
+                    paparSenaraiUcapan(); 
                 }
             };
 
@@ -1273,6 +1364,7 @@
                 const docRef = doc(db, "users_kad_raya", currentUserInfo.uid);
                 await setDoc(docRef, { ucapanList: kadData.ucapanList }, { merge: true });
                 updateUI();
+                alert("Ucapan dihantar!");
             } catch (e) { alert("Gagal hantar ucapan ke pangkalan data."); }
         };
 
@@ -1310,6 +1402,21 @@
                 else dot.classList.remove('active');
             });
             
+            // Urus Kelas Aktif untuk Animasi Zum Imej
+            const slides = document.querySelectorAll('.carousel-slide');
+            slides.forEach((slide, index) => {
+                if(index === currentSlide) slide.classList.add('active-slide');
+                else slide.classList.remove('active-slide');
+            });
+            
+            // Cetus Animasi Teks Melenting
+            const textWrapper = document.getElementById('anim-text-wrapper');
+            if (textWrapper) {
+                textWrapper.classList.remove('animate-text-pop');
+                void textWrapper.offsetWidth; // helah CSS untuk memulakan semula animasi
+                textWrapper.classList.add('animate-text-pop');
+            }
+
             let tajuk = document.getElementById('tab-title');
             let pantun = document.getElementById('teks-pantun');
             if(tajuk && pantun) {
@@ -1372,7 +1479,7 @@
                 movedBy = val - prevTranslate;
             }
             
-            track.style.transition = 'transform 0.3s ease-in-out';
+            track.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             
             if (movedBy < -15 && currentSlide < 4) currentSlide += 1;
             if (movedBy > 15 && currentSlide > 0) currentSlide -= 1;
@@ -1383,7 +1490,6 @@
         function getPositionX(event) {
             return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
         }
-
 
         // --- FUNGSI ANTARAMUKA (UI) ---
         function muatUIEditorKad() {
@@ -1513,10 +1619,6 @@
             if(el = document.getElementById('admin-video')) el.value = kadData.video || '';
             if(el = document.getElementById('admin-muzik')) el.value = kadData.muzik || '';
             if(el = document.getElementById('admin-custom-url')) el.value = kadData.customUrl || '';
-            
-            for(let i=1; i<=5; i++) {
-                if(el = document.getElementById('admin-tema-img-'+i)) el.value = (kadData.temaImages && kadData.temaImages[i-1]) ? kadData.temaImages[i-1] : defaultData.temaImages[i-1];
-            }
             
             for(let i=1; i<=5; i++) {
                 if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultData.gambarTabs[i-1];
