@@ -325,6 +325,77 @@
         .ad-banner a:hover {
             text-decoration: underline;
         }
+        
+        /* Overlay Intro Video */
+        #intro-video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #intro-video-element {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-skip-intro {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .btn-skip-intro:hover {
+            background: var(--primary-yellow);
+            color: #000;
+            border-color: var(--primary-yellow);
+        }
+        
+        .play-overlay-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255,255,255,0.5);
+            z-index: 10000;
+            transition: all 0.3s;
+        }
+        
+        .play-overlay-btn:hover {
+            background: var(--primary-yellow);
+            color: #000;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
 
     </style>
 </head>
@@ -337,6 +408,17 @@
         <div class="orb orb-2"></div>
         <i class="fa-solid fa-moon moon"></i>
         <div id="stars-container"></div>
+    </div>
+    
+    <!-- Video Intro Overlay -->
+    <div id="intro-video-overlay">
+        <video id="intro-video-element" playsinline>
+            <source src="" type="video/mp4">
+        </video>
+        <div class="play-overlay-btn" id="play-intro-btn" onclick="mulakanVideoIntro()">
+            <i class="fa-solid fa-play"></i>
+        </div>
+        <button class="btn-skip-intro" onclick="tutupVideoIntro()">Langkau Intro <i class="fa-solid fa-forward-step"></i></button>
     </div>
 
     <!-- ============================================== -->
@@ -538,10 +620,6 @@
                     
                     <div class="glass-panel" style="padding: 15px;">
                         
-                        <div class="media-container" id="video-container" style="display: none;">
-                            <video id="display-video" controls><source src="" type="video/mp4"></video>
-                        </div>
-                        
                         <!-- Slider Carousel (Nisbah 4:6 Auto-Fix) -->
                         <div class="carousel-container" id="image-carousel">
                             <div class="carousel-track" id="carousel-track">
@@ -621,9 +699,9 @@
                 <div class="form-group"><label>Nama Pengirim</label><input type="text" id="admin-nama"></div>
                 <div class="form-group"><label>Ucapan Pengenalan</label><textarea id="admin-intro" style="min-height: 60px;"></textarea></div>
                 <div class="form-group">
-                    <label>URL Video MP4 (Pilihan)</label>
+                    <label>URL Video MP4 (Intro Latar Penuh)</label>
                     <input type="text" id="admin-video" placeholder="Cth: Pautan Google Drive/Video...">
-                    <small style="color: rgba(255,255,255,0.5); font-size: 0.7rem; display: block; margin-top: 5px;">Sila muat naik video anda ke Google Drive/Hosting pilihan dan tampal pautan di sini.</small>
+                    <small style="color: rgba(255,255,255,0.5); font-size: 0.7rem; display: block; margin-top: 5px;">Video ini akan dimainkan pada skrin penuh (fullscreen) sebelum kad ini ditunjukkan.</small>
                 </div>
                 <div class="form-group">
                     <label>Muzik Latar (Pilih dari senarai atau masukkan URL)</label>
@@ -763,6 +841,7 @@
         let kadData = null;
         let isGuestMode = false; 
         let viewingSharedId = null;
+        let hasSeenIntro = false;
         
         let globalTemaImages = [];
 
@@ -805,6 +884,10 @@
 
         function cubaMainkanMuzikLatar() {
             let pageKad = document.getElementById('page-kad');
+            let introOverlay = document.getElementById('intro-video-overlay');
+            // Jangan main muzik latar jika intro sedang ditunjukkan
+            if(introOverlay && introOverlay.style.display === 'flex') return;
+            
             if(pageKad && pageKad.classList.contains('active')) {
                 if (!muzikBermula && !penggunaHentiMuzik) {
                     let audioEl = document.getElementById("laguRaya");
@@ -825,6 +908,54 @@
 
         document.body.addEventListener('click', cubaMainkanMuzikLatar);
         document.body.addEventListener('touchstart', cubaMainkanMuzikLatar);
+        
+        // --- PENGURUSAN VIDEO INTRO ---
+        window.mulakanVideoIntro = () => {
+            let vOverlay = document.getElementById('intro-video-overlay');
+            let vElement = document.getElementById('intro-video-element');
+            let pBtn = document.getElementById('play-intro-btn');
+            
+            if(pBtn) pBtn.style.display = 'none';
+            if(vElement) {
+                vElement.play().catch(e => console.log("Video autoplay failed", e));
+                
+                vElement.onended = () => {
+                    window.tutupVideoIntro();
+                };
+            }
+        };
+        
+        window.tutupVideoIntro = () => {
+            let vOverlay = document.getElementById('intro-video-overlay');
+            let vElement = document.getElementById('intro-video-element');
+            
+            if(vElement) vElement.pause();
+            if(vOverlay) {
+                vOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    vOverlay.style.display = 'none';
+                    cubaMainkanMuzikLatar(); // Cuba mainkan muzik sebaik intro tamat
+                }, 400);
+            }
+            hasSeenIntro = true;
+        };
+
+        function paparVideoIntro() {
+            if(hasSeenIntro) return;
+            if(kadData && kadData.video && kadData.video.trim() !== '') {
+                let vOverlay = document.getElementById('intro-video-overlay');
+                let vElement = document.getElementById('intro-video-element');
+                
+                if(vOverlay && vElement) {
+                    vElement.src = kadData.video;
+                    vOverlay.style.display = 'flex';
+                    vOverlay.style.opacity = '1';
+                    
+                    let pBtn = document.getElementById('play-intro-btn');
+                    if(pBtn) pBtn.style.display = 'flex';
+                }
+            }
+        }
 
         // Semak Parameter URL (Untuk pautan "Share")
         const urlParams = new URLSearchParams(window.location.search);
@@ -920,6 +1051,7 @@
                 muatUIEditorKad();
                 paparHalaman('page-kad');
                 setupRealtimeUcapan(); 
+                paparVideoIntro();
                 
             } catch (e) {
                 console.error("Ralat muat kad tetamu:", e);
@@ -937,7 +1069,6 @@
             }
             
             let bottomNav = document.getElementById('bottom-nav-bar');
-            let displayVideo = document.getElementById('display-video');
             let audioEl = document.getElementById("laguRaya");
             
             if(pageId === 'page-kad') {
@@ -945,7 +1076,6 @@
                 if(typeof window.initSlider === 'function') window.initSlider(); 
             } else {
                 if(bottomNav) bottomNav.classList.remove('active');
-                if(displayVideo) displayVideo.pause();
                 
                 if (audioEl && !audioEl.paused) {
                     audioEl.pause();
@@ -953,7 +1083,7 @@
                 muzikBermula = false;
                 penggunaHentiMuzik = false; 
                 
-                if(typeof hentikanAutoSlide === 'function') window.hentikanAutoSlide(); // Berhentikan slider
+                if(typeof hentikanAutoSlide === 'function') window.hentikanAutoSlide(); 
                 
                 let btnMuzik = document.getElementById("btn-muzik");
                 let ikonMuzik = document.getElementById("ikon-muzik");
@@ -1095,6 +1225,7 @@
             } catch(e) {
                 console.error("Gagal simpan imej tema global:", e);
                 alert("Gagal menyimpan. Sila pastikan Firestore membenarkan penulisan ke 'global_settings'.");
+                // Fallback untuk mod tempatan
                 globalTemaImages = newImages;
                 kemasKiniPaparanImejTema();
             }
@@ -1534,16 +1665,6 @@
             let intro = document.getElementById('display-intro');
             if(intro) intro.innerText = kadData.intro;
             
-            let videoEl = document.getElementById('display-video');
-            let videoContainer = document.getElementById('video-container');
-            if(videoEl && videoContainer) {
-                if (kadData.video && kadData.video.trim() !== '') {
-                    videoEl.src = kadData.video; videoContainer.style.display = 'block';
-                } else {
-                    videoContainer.style.display = 'none'; videoEl.src = '';
-                }
-            }
-            
             let audioEl = document.getElementById("laguRaya");
             if(audioEl) {
                 let audioSource = audioEl.querySelector("source");
@@ -1612,9 +1733,6 @@
                 if(view) view.classList.add('active'); 
                 if(viewId === 'view-home' && typeof window.initSlider === 'function') window.initSlider(); 
             }, 50);
-            
-            let video = document.getElementById('display-video');
-            if(viewId !== 'view-home' && video) video.pause();
         };
 
         // Fungsi memuat turun senarai MP3 dari Archive.org
