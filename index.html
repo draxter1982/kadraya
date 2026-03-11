@@ -167,14 +167,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px 20px; /* Ruang supaya animasi pop ada ruang bernafas */
-            box-sizing: border-box;
+            aspect-ratio: 4 / 6; /* Nisbah 4:6 mengikut permintaan supaya kekal fix */
+            background-color: #0a0a0a;
+            overflow: hidden; /* Penting untuk efek zum */
         }
 
         /* Imej di dalam slider - Dimensi Fix 4:6 */
         .carousel-slide img {
             width: 100%;
-            aspect-ratio: 4 / 6; /* Nisbah potret tetap */
+            height: 100%;
             object-fit: cover; /* Auto crop untuk elak gambar memanjang */
             object-position: center top; 
             border-radius: 20px;
@@ -556,13 +557,14 @@
                         </div>
 
                         <div id="tab-dynamic-content" style="transition: opacity 0.4s ease, transform 0.4s ease;">
-                            <p class="intro-text" id="display-intro"></p>
-                            <hr style="border-top: 1px dashed var(--glass-border); margin: 25px 0;">
-                            <!-- Bekas untuk teks beranimasi (Bouncy Pop-up) -->
+                            <!-- Bekas untuk teks beranimasi (Bouncy Pop-up) Slaid -->
                             <div class="tab-content-wrapper" id="anim-text-wrapper">
                                 <h2 id="tab-title">Famili</h2>
                                 <p class="pantun" id="teks-pantun"></p>
                             </div>
+                            <hr style="border-top: 1px dashed var(--glass-border); margin: 25px 0;">
+                            <!-- Teks Intro di bawah Slaid -->
+                            <p class="intro-text" id="display-intro"></p>
                         </div>
                     </div>
                 </div>
@@ -893,25 +895,17 @@
                         kadData = foundDoc.data();
                         viewingSharedId = foundDoc.id; 
                     } else {
-                        // Jika tak jumpa juga di Firestore, gunakan data lalai sementara
-                        console.warn("Kad tidak dijumpai di Firestore.");
-                        kadData = { ...defaultData, nama: 'Tetamu' };
-                        viewingSharedId = uid_or_customUrl;
+                        alert("Maaf, pautan kad ini tidak sah atau telah dipadam.");
+                        window.location.href = window.location.href.split('?')[0]; 
+                        return;
                     }
                 }
-            } catch (e) {
-                console.error("Ralat muat kad tetamu:", e);
-                // Fallback kepada data lalai jika akses disekat
-                kadData = { ...defaultData, nama: 'Tetamu' };
-                viewingSharedId = uid_or_customUrl;
-            } finally {
-                // Pastikan data lengkap untuk mengelak ralat UI
+
                 if(!kadData.tema) kadData.tema = 'tema1';
                 if(!kadData.qrText) kadData.qrText = defaultData.qrText;
                 if(!kadData.tajukUtama) kadData.tajukUtama = defaultData.tajukUtama;
                 if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
                 if(!kadData.muzik) kadData.muzik = defaultData.muzik;
-                if(!kadData.temaImages) kadData.temaImages = defaultData.temaImages;
                 if(!kadData.ucapanList) kadData.ucapanList = [];
 
                 let navOwner = document.getElementById('nav-owner-controls');
@@ -921,6 +915,10 @@
                 muatUIEditorKad();
                 paparHalaman('page-kad');
                 setupRealtimeUcapan(); 
+                
+            } catch (e) {
+                console.error("Ralat muat kad tetamu:", e);
+                alert("Gagal memuatkan kad. Sila pastikan sambungan internet anda stabil.");
             }
         }
 
@@ -939,7 +937,7 @@
             
             if(pageId === 'page-kad') {
                 if(bottomNav) bottomNav.classList.add('active');
-                if(!isGuestMode) window.initSlider(); 
+                if(!isGuestMode && typeof window.initSlider === 'function') window.initSlider(); 
             } else {
                 if(bottomNav) bottomNav.classList.remove('active');
                 if(displayVideo) displayVideo.pause();
@@ -1023,8 +1021,8 @@
 
         // --- FUNGSI SUPER ADMIN ---
         window.logMasukSuperAdmin = () => {
-            let pwd = prompt("Sila masukkan kata laluan admin");
-            if (pwd === "draxter1982" || pwd === "draxter1982") {
+            let pwd = prompt("Sila masukkan kata laluan admin:");
+            if (pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 
                 // Set nilai input untuk imej tema global
@@ -1628,6 +1626,10 @@
             if(el = document.getElementById('admin-video')) el.value = kadData.video || '';
             if(el = document.getElementById('admin-muzik')) el.value = kadData.muzik || '';
             if(el = document.getElementById('admin-custom-url')) el.value = kadData.customUrl || '';
+            
+            for(let i=1; i<=5; i++) {
+                if(el = document.getElementById('admin-tema-img-'+i)) el.value = (kadData.temaImages && kadData.temaImages[i-1]) ? kadData.temaImages[i-1] : defaultTemaImages[i-1];
+            }
             
             for(let i=1; i<=5; i++) {
                 if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultData.gambarTabs[i-1];
