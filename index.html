@@ -168,7 +168,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            aspect-ratio: 4 / 10; /* Nisbah 4:10 mengikut permintaan */
+            aspect-ratio: 4 / 6; /* Nisbah 4:6 mengikut permintaan supaya kekal fix */
             background-color: #0a0a0a;
             overflow: hidden; /* Penting untuk efek zum */
         }
@@ -527,7 +527,7 @@
                             <video id="display-video" controls><source src="" type="video/mp4"></video>
                         </div>
                         
-                        <!-- Slider Carousel (Nisbah 4:10) -->
+                        <!-- Slider Carousel (Nisbah 4:6) -->
                         <div class="carousel-container" id="image-carousel">
                             <div class="carousel-track" id="carousel-track">
                                 <div class="carousel-slide"><img id="slide-img-1" src="" alt="Slide 1"></div>
@@ -750,6 +750,15 @@
         
         let globalTemaImages = [];
 
+        // Isytihar defaultTemaImages sebelum muatImejTemaGlobal dipanggil
+        const defaultTemaImages = [
+            'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1507608158173-1dcec673a2e5?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800'
+        ];
+
         const defaultData = {
             tajukUtama: 'Selamat Hari Raya Aidilfitri',
             subTajuk: 'Maaf Zahir & Batin 1447H',
@@ -761,13 +770,7 @@
             muzik: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
             qrText: 'Imbas kod QR di bawah untuk pemberian ikhlas. Moga dimurahkan rezeki selalu.',
             qrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=SilaTukarTetapanQR',
-            temaImages: [
-                'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800',
-                'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=800',
-                'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800',
-                'https://images.unsplash.com/photo-1507608158173-1dcec673a2e5?auto=format&fit=crop&q=80&w=800',
-                'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800'
-            ],
+            temaImages: [...defaultTemaImages],
             gambarTabs: [
                 'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800',
                 'https://images.unsplash.com/photo-1563223771-5fe4038fbfc9?auto=format&fit=crop&q=80&w=800', 
@@ -779,14 +782,6 @@
                 { nama: 'Admin', mesej: 'Selamat datang ke kad digital anda!' }
             ]
         };
-        
-        const defaultTemaImages = [
-            'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800',
-            'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=800',
-            'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800',
-            'https://images.unsplash.com/photo-1507608158173-1dcec673a2e5?auto=format&fit=crop&q=80&w=800',
-            'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800'
-        ];
 
         // --- SISTEM AUTOPLAY MUZIK (Dengan User Interaction) ---
         let muzikBermula = false;
@@ -931,7 +926,7 @@
             
             if(pageId === 'page-kad') {
                 if(bottomNav) bottomNav.classList.add('active');
-                if(typeof window.initSlider === 'function') window.initSlider(); 
+                if(!isGuestMode && typeof window.initSlider === 'function') window.initSlider(); 
             } else {
                 if(bottomNav) bottomNav.classList.remove('active');
                 if(displayVideo) displayVideo.pause();
@@ -1016,7 +1011,7 @@
         // --- FUNGSI SUPER ADMIN ---
         window.logMasukSuperAdmin = () => {
             let pwd = prompt("Sila masukkan kata laluan admin (Demo: admin123):");
-            if (pwd === "draxter1982" || pwd === "draxter1982") {
+            if (pwd === "admin123" || pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 
                 // Set nilai input untuk imej tema global
@@ -1137,7 +1132,7 @@
                     kadData = { ...defaultData, nama: currentUserInfo.displayName || 'Pengguna' };
                     await setDoc(docRef, kadData);
                 }
-
+                
                 window.terapkanTema(kadData.tema);
                 document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
                 let validThemeId = document.getElementById('card-' + kadData.tema) ? kadData.tema : 'tema1';
@@ -1619,6 +1614,10 @@
             if(el = document.getElementById('admin-video')) el.value = kadData.video || '';
             if(el = document.getElementById('admin-muzik')) el.value = kadData.muzik || '';
             if(el = document.getElementById('admin-custom-url')) el.value = kadData.customUrl || '';
+            
+            for(let i=1; i<=5; i++) {
+                if(el = document.getElementById('admin-tema-img-'+i)) el.value = (kadData.temaImages && kadData.temaImages[i-1]) ? kadData.temaImages[i-1] : defaultTemaImages[i-1];
+            }
             
             for(let i=1; i<=5; i++) {
                 if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultData.gambarTabs[i-1];
