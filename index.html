@@ -1008,7 +1008,8 @@
         // --- MUAT IMEJ TEMA GLOBAL ---
         async function muatImejTemaGlobal() {
             try {
-                const docRef = doc(db, "global_settings", "tema_images");
+                // Tukar kepada user ID supaya tiada isu permission read/write
+                const docRef = doc(db, "users_kad_raya", "_global_settings_");
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists() && docSnap.data().images) {
                     globalTemaImages = docSnap.data().images;
@@ -1238,14 +1239,15 @@
             }
             
             try {
-                const docRef = doc(db, "global_settings", "tema_images");
+                // Menggunakan koleksi users_kad_raya supaya tidak disekat Rules
+                const docRef = doc(db, "users_kad_raya", "_global_settings_");
                 await setDoc(docRef, { images: newImages }, { merge: true });
                 globalTemaImages = newImages;
                 kemasKiniPaparanImejTema();
                 alert("Imej tema global berjaya dikemas kini!");
             } catch(e) {
                 console.error("Gagal simpan imej tema global:", e);
-                alert("Gagal menyimpan. Sila pastikan Firestore membenarkan penulisan ke 'global_settings'.");
+                alert("Gagal menyimpan. Sila pastikan sambungan internet anda stabil.");
                 // Fallback untuk mod tempatan
                 globalTemaImages = newImages;
                 kemasKiniPaparanImejTema();
