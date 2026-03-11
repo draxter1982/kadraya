@@ -349,12 +349,13 @@
 
         .btn-skip-intro {
             position: absolute;
-            bottom: 30px;
-            right: 30px;
+            bottom: 80px; /* Di atas sedikit dari dasar */
+            left: 50%; /* Letak ke tengah skrin */
+            transform: translateX(-50%); /* Penjajaran tepat di tengah */
             background: rgba(0,0,0,0.6);
             color: white;
             border: 1px solid rgba(255,255,255,0.3);
-            padding: 10px 20px;
+            padding: 10px 25px;
             border-radius: 30px;
             font-family: var(--font-body);
             font-weight: 600;
@@ -362,6 +363,7 @@
             z-index: 10000;
             backdrop-filter: blur(10px);
             transition: all 0.3s;
+            white-space: nowrap;
         }
 
         .btn-skip-intro:hover {
@@ -412,7 +414,8 @@
     
     <!-- Video Intro Overlay -->
     <div id="intro-video-overlay">
-        <video id="intro-video-element" playsinline>
+        <!-- Tambah autoplay untuk percubaan automatik -->
+        <video id="intro-video-element" playsinline autoplay>
             <source src="" type="video/mp4">
         </video>
         <div class="play-overlay-btn" id="play-intro-btn" onclick="mulakanVideoIntro()">
@@ -619,6 +622,10 @@
                 <div class="home-layout">
                     
                     <div class="glass-panel" style="padding: 15px;">
+                        
+                        <div class="media-container" id="video-container" style="display: none;">
+                            <video id="display-video" controls><source src="" type="video/mp4"></video>
+                        </div>
                         
                         <!-- Slider Carousel (Nisbah 4:6 Auto-Fix) -->
                         <div class="carousel-container" id="image-carousel">
@@ -952,7 +959,19 @@
                     vOverlay.style.opacity = '1';
                     
                     let pBtn = document.getElementById('play-intro-btn');
-                    if(pBtn) pBtn.style.display = 'flex';
+                    // Cuba jalankan autoplay secara logik kod
+                    let playPromise = vElement.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            if(pBtn) pBtn.style.display = 'none';
+                        }).catch(error => {
+                            if(pBtn) pBtn.style.display = 'flex';
+                        });
+                    }
+                    
+                    vElement.onended = () => {
+                        window.tutupVideoIntro();
+                    };
                 }
             }
         }
@@ -1069,6 +1088,7 @@
             }
             
             let bottomNav = document.getElementById('bottom-nav-bar');
+            let displayVideo = document.getElementById('display-video');
             let audioEl = document.getElementById("laguRaya");
             
             if(pageId === 'page-kad') {
@@ -1076,6 +1096,7 @@
                 if(typeof window.initSlider === 'function') window.initSlider(); 
             } else {
                 if(bottomNav) bottomNav.classList.remove('active');
+                if(displayVideo) displayVideo.pause();
                 
                 if (audioEl && !audioEl.paused) {
                     audioEl.pause();
