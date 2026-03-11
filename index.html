@@ -139,16 +139,14 @@
 
         .home-layout { position: relative; padding: 0;}
         
-        /* Carousel Container */
+        /* =======================================
+           ANIMASI & DIMENSI SLIDER CAROUSEL
+           ======================================= */
         .carousel-container {
             width: 100%;
-            overflow: hidden;
+            overflow: visible; /* Penting supaya zoom out tak terpotong teruk */
             position: relative;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             margin-bottom: 25px;
-            border: 3px solid var(--glass-border);
-            transition: border-color 0.8s ease;
         }
 
         .carousel-track {
@@ -156,6 +154,7 @@
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             width: 100%;
             cursor: grab;
+            align-items: center; /* Pastikan semua slide tengah selari */
         }
         
         .carousel-track:active {
@@ -168,25 +167,35 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            aspect-ratio: 4 / 6; /* Nisbah 4:6 mengikut permintaan supaya kekal fix */
-            background-color: #0a0a0a;
-            overflow: hidden; /* Penting untuk efek zum */
+            padding: 10px 20px; /* Ruang supaya animasi pop ada ruang bernafas */
+            box-sizing: border-box;
         }
 
-        /* EFEK ANIMASI 1: Fokus Imej (Zoom-out Lembut) */
+        /* Imej di dalam slider - Dimensi Fix 4:6 */
         .carousel-slide img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            aspect-ratio: 4 / 6; /* Nisbah potret tetap */
+            object-fit: cover; /* Auto crop untuk elak gambar memanjang */
+            object-position: center top; 
+            border-radius: 20px;
             display: block;
-            transform: scale(1.15); /* Asalnya besar sedikit */
-            opacity: 0.4; /* Agak gelap bila tidak aktif */
-            transition: transform 0.8s cubic-bezier(0.21, 1.11, 0.81, 0.99), opacity 0.8s ease;
+            border: 3px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            
+            /* Animasi asal (ketika tidak aktif / sedang slide) */
+            transform: scale(0.85); 
+            opacity: 0.5; 
+            filter: blur(2px) brightness(0.7);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
+        /* Kesan pop-up & terang pada slide yang aktif di tengah */
         .carousel-slide.active-slide img {
-            transform: scale(1); /* Zum perlahan-lahan kembali ke normal */
-            opacity: 1; /* Menjadi terang benderang */
+            transform: scale(1);
+            opacity: 1;
+            filter: blur(0) brightness(1);
+            border-color: var(--primary-yellow);
+            box-shadow: 0 15px 35px var(--glass-border);
         }
         
         /* Navigation Dots */
@@ -194,7 +203,7 @@
             display: flex;
             justify-content: center;
             gap: 8px;
-            margin-top: -15px;
+            margin-top: -10px;
             margin-bottom: 20px;
             position: relative;
             z-index: 10;
@@ -527,7 +536,7 @@
                             <video id="display-video" controls><source src="" type="video/mp4"></video>
                         </div>
                         
-                        <!-- Slider Carousel (Nisbah 4:6) -->
+                        <!-- Slider Carousel (Nisbah 4:6 Auto-Fix) -->
                         <div class="carousel-container" id="image-carousel">
                             <div class="carousel-track" id="carousel-track">
                                 <div class="carousel-slide"><img id="slide-img-1" src="" alt="Slide 1"></div>
@@ -884,17 +893,25 @@
                         kadData = foundDoc.data();
                         viewingSharedId = foundDoc.id; 
                     } else {
-                        alert("Maaf, pautan kad ini tidak sah atau telah dipadam.");
-                        window.location.href = window.location.href.split('?')[0]; 
-                        return;
+                        // Jika tak jumpa juga di Firestore, gunakan data lalai sementara
+                        console.warn("Kad tidak dijumpai di Firestore.");
+                        kadData = { ...defaultData, nama: 'Tetamu' };
+                        viewingSharedId = uid_or_customUrl;
                     }
                 }
-
+            } catch (e) {
+                console.error("Ralat muat kad tetamu:", e);
+                // Fallback kepada data lalai jika akses disekat
+                kadData = { ...defaultData, nama: 'Tetamu' };
+                viewingSharedId = uid_or_customUrl;
+            } finally {
+                // Pastikan data lengkap untuk mengelak ralat UI
                 if(!kadData.tema) kadData.tema = 'tema1';
                 if(!kadData.qrText) kadData.qrText = defaultData.qrText;
                 if(!kadData.tajukUtama) kadData.tajukUtama = defaultData.tajukUtama;
                 if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
                 if(!kadData.muzik) kadData.muzik = defaultData.muzik;
+                if(!kadData.temaImages) kadData.temaImages = defaultData.temaImages;
                 if(!kadData.ucapanList) kadData.ucapanList = [];
 
                 let navOwner = document.getElementById('nav-owner-controls');
@@ -904,10 +921,6 @@
                 muatUIEditorKad();
                 paparHalaman('page-kad');
                 setupRealtimeUcapan(); 
-                
-            } catch (e) {
-                console.error("Ralat muat kad tetamu:", e);
-                alert("Gagal memuatkan kad. Sila pastikan sambungan internet anda stabil.");
             }
         }
 
@@ -926,7 +939,7 @@
             
             if(pageId === 'page-kad') {
                 if(bottomNav) bottomNav.classList.add('active');
-                if(!isGuestMode && typeof window.initSlider === 'function') window.initSlider(); 
+                if(!isGuestMode) window.initSlider(); 
             } else {
                 if(bottomNav) bottomNav.classList.remove('active');
                 if(displayVideo) displayVideo.pause();
@@ -1010,8 +1023,8 @@
 
         // --- FUNGSI SUPER ADMIN ---
         window.logMasukSuperAdmin = () => {
-            let pwd = prompt("Sila masukkan kata laluan admin (Demo: admin123):");
-            if (pwd === "admin123" || pwd === "draxter1982") {
+            let pwd = prompt("Sila masukkan kata laluan admin");
+            if (pwd === "draxter1982" || pwd === "draxter1982") {
                 paparHalaman('page-superadmin');
                 
                 // Set nilai input untuk imej tema global
@@ -1078,6 +1091,7 @@
             } catch(e) {
                 console.error("Gagal simpan imej tema global:", e);
                 alert("Gagal menyimpan. Sila pastikan Firestore membenarkan penulisan ke 'global_settings'.");
+                // Fallback untuk mod tempatan
                 globalTemaImages = newImages;
                 kemasKiniPaparanImejTema();
             }
@@ -1614,10 +1628,6 @@
             if(el = document.getElementById('admin-video')) el.value = kadData.video || '';
             if(el = document.getElementById('admin-muzik')) el.value = kadData.muzik || '';
             if(el = document.getElementById('admin-custom-url')) el.value = kadData.customUrl || '';
-            
-            for(let i=1; i<=5; i++) {
-                if(el = document.getElementById('admin-tema-img-'+i)) el.value = (kadData.temaImages && kadData.temaImages[i-1]) ? kadData.temaImages[i-1] : defaultTemaImages[i-1];
-            }
             
             for(let i=1; i<=5; i++) {
                 if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultData.gambarTabs[i-1];
