@@ -296,6 +296,28 @@
         /* Animasi Tambahan */
         @keyframes slideUpNav { from { bottom: -100px; opacity: 0; } to { bottom: 15px; opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulseGlowBtn { 
+            0% { box-shadow: 0 0 0 0 rgba(255, 223, 0, 0.7); } 
+            70% { box-shadow: 0 0 0 15px rgba(255, 223, 0, 0); } 
+            100% { box-shadow: 0 0 0 0 rgba(255, 223, 0, 0); } 
+        }
+
+        /* Butang Buat Kad Sendiri */
+        .btn-create-own {
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, #FFDF00, #FF9900);
+            color: #000; text-decoration: none; padding: 10px 18px;
+            border-radius: 30px; font-family: var(--font-body); font-weight: 700; font-size: 0.8rem;
+            margin: 0 auto 25px auto; width: fit-content;
+            box-shadow: 0 5px 15px rgba(255, 223, 0, 0.4);
+            animation: pulseGlowBtn 2s infinite;
+            transition: all 0.3s;
+        }
+        .btn-create-own:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: linear-gradient(135deg, #FFF176, #FFB300);
+        }
+        .btn-create-own:active { transform: scale(0.95); }
 
         /* SUPER ADMIN STYLES */
         .admin-user-item { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary-yellow); transition: 0.3s; }
@@ -645,6 +667,11 @@
                             <div class="dot" onclick="pindahSlide(3)"></div>
                             <div class="dot" onclick="pindahSlide(4)"></div>
                         </div>
+
+                        <!-- Butang Buat Kad Sendiri -->
+                        <a href="https://kadraya.vercel.app/" target="_blank" class="btn-create-own">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> BUAT KAD DIGITAL RAYA (FREE)
+                        </a>
 
                         <div id="tab-dynamic-content" style="transition: opacity 0.4s ease, transform 0.4s ease;">
                             <!-- Bekas untuk teks beranimasi (Bouncy Pop-up) Slaid -->
@@ -1261,6 +1288,11 @@
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Ralat Log Masuk Firebase:", error);
+                
+                // Tambah maklum balas mesra pengguna untuk ralat domain
+                if (error.code === 'auth/unauthorized-domain') {
+                    alert("Makluman: Domain Canvas ini belum dibenarkan di Firebase anda.\n\nSistem akan log masuk menggunakan 'Mod Tempatan' (Demo) supaya anda masih boleh menguji rekaan kad ini.");
+                }
                 
                 // Gunakan mode demo secara automatik jika ralat auth berlaku
                 currentUserInfo = { uid: 'demo_user_123', displayName: 'Pengguna Demo' };
