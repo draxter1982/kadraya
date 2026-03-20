@@ -614,51 +614,61 @@
             </div>
 
             <div class="admin-group">
-                <h3><i class="fa-solid fa-images"></i> Gambar Album (Slide 1-5)</h3>
+                <h3><i class="fa-solid fa-images"></i> Gambar Album & Penerangan</h3>
                 
                 <div class="form-group">
-                    <label>Gambar Slide 1 (Famili)</label>
-                    <div style="display:flex; gap:8px;">
+                    <label>Slaid 1 (Gambar, Tajuk & Penerangan)</label>
+                    <div style="display:flex; gap:8px; margin-bottom: 8px;">
                         <input type="text" id="admin-gambar-1" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-1" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-1')">
                         <button type="button" class="btn-upload" onclick="document.getElementById('file-gambar-1').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
                     </div>
+                    <input type="text" id="admin-slide-title-1" placeholder="Tajuk (Cth: Famili)" style="margin-bottom: 8px;">
+                    <textarea id="admin-slide-desc-1" placeholder="Penerangan atau Pantun..." style="min-height: 60px;"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label>Gambar Slide 2</label>
-                    <div style="display:flex; gap:8px;">
+                    <label>Slaid 2</label>
+                    <div style="display:flex; gap:8px; margin-bottom: 8px;">
                         <input type="text" id="admin-gambar-2" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-2" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-2')">
                         <button type="button" class="btn-upload" onclick="document.getElementById('file-gambar-2').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
                     </div>
+                    <input type="text" id="admin-slide-title-2" placeholder="Tajuk Slaid 2" style="margin-bottom: 8px;">
+                    <textarea id="admin-slide-desc-2" placeholder="Penerangan atau Pantun..." style="min-height: 60px;"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label>Gambar Slide 3</label>
-                    <div style="display:flex; gap:8px;">
+                    <label>Slaid 3</label>
+                    <div style="display:flex; gap:8px; margin-bottom: 8px;">
                         <input type="text" id="admin-gambar-3" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-3" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-3')">
                         <button type="button" class="btn-upload" onclick="document.getElementById('file-gambar-3').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
                     </div>
+                    <input type="text" id="admin-slide-title-3" placeholder="Tajuk Slaid 3" style="margin-bottom: 8px;">
+                    <textarea id="admin-slide-desc-3" placeholder="Penerangan atau Pantun..." style="min-height: 60px;"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label>Gambar Slide 4</label>
-                    <div style="display:flex; gap:8px;">
+                    <label>Slaid 4</label>
+                    <div style="display:flex; gap:8px; margin-bottom: 8px;">
                         <input type="text" id="admin-gambar-4" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-4" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-4')">
                         <button type="button" class="btn-upload" onclick="document.getElementById('file-gambar-4').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
                     </div>
+                    <input type="text" id="admin-slide-title-4" placeholder="Tajuk Slaid 4" style="margin-bottom: 8px;">
+                    <textarea id="admin-slide-desc-4" placeholder="Penerangan atau Pantun..." style="min-height: 60px;"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label>Gambar Slide 5</label>
-                    <div style="display:flex; gap:8px;">
+                    <label>Slaid 5</label>
+                    <div style="display:flex; gap:8px; margin-bottom: 8px;">
                         <input type="text" id="admin-gambar-5" placeholder="URL Gambar..." style="flex:1;">
                         <input type="file" id="file-gambar-5" accept="image/*" style="display:none;" onchange="muatNaikGambar(this, 'admin-gambar-5')">
                         <button type="button" class="btn-upload" onclick="document.getElementById('file-gambar-5').click()" title="Muat Naik Gambar"><i class="fa-solid fa-upload"></i></button>
                     </div>
+                    <input type="text" id="admin-slide-title-5" placeholder="Tajuk Slaid 5" style="margin-bottom: 8px;">
+                    <textarea id="admin-slide-desc-5" placeholder="Penerangan atau Pantun..." style="min-height: 60px;"></textarea>
                 </div>
             </div>
 
@@ -721,6 +731,15 @@
             'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800'
         ];
 
+        const defaultSlideTitles = ['Famili', 'Sahabat', 'Memori 1', 'Memori 2', 'Memori 3'];
+        const defaultSlideDescs = [
+            'Pergi ke pekan membeli ketupat,<br>Singgah sebentar membeli pegaga;<br>Andai ada silap dan khilaf terbuat,<br>Maaf dipinta dari hati sekeluarga.',
+            'Jauh di mata dekat di hati,<br>Salam kemaafan pengganti diri.',
+            'Kenangan manis di pagi raya,<br>Kekal terpahat selamanya.',
+            'Gelak tawa riang ria,<br>Menjadi memori di hari raya.',
+            'Indahnya Syawal kian terasa,<br>Bersama insan yang tercinta.'
+        ];
+
         const defaultData = {
             tajukUtama: 'Selamat Hari Raya Aidilfitri',
             subTajuk: 'Maaf Zahir & Batin 1447H',
@@ -740,6 +759,8 @@
                 'https://images.unsplash.com/photo-1585802521915-0210287ee3b4?auto=format&fit=crop&q=80&w=800', 
                 'https://images.unsplash.com/photo-1507608158173-1dcec673a2e5?auto=format&fit=crop&q=80&w=800'
             ],
+            slideTitles: [...defaultSlideTitles],
+            slideDescs: [...defaultSlideDescs],
             ucapanList: [
                 { nama: 'Admin', mesej: 'Selamat datang ke kad digital anda!' }
             ]
@@ -922,6 +943,8 @@
                 if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
                 if(!kadData.muzik) kadData.muzik = defaultData.muzik;
                 if(!kadData.ucapanList) kadData.ucapanList = [];
+                if(!kadData.slideTitles) kadData.slideTitles = [...defaultSlideTitles];
+                if(!kadData.slideDescs) kadData.slideDescs = [...defaultSlideDescs];
 
                 let navOwner = document.getElementById('nav-owner-controls');
                 if (navOwner) navOwner.style.display = 'none';
@@ -1123,6 +1146,8 @@
                     if(!kadData.subTajuk) kadData.subTajuk = defaultData.subTajuk;
                     if(!kadData.muzik) kadData.muzik = defaultData.muzik;
                     if(!kadData.ucapanList) kadData.ucapanList = [];
+                    if(!kadData.slideTitles) kadData.slideTitles = [...defaultSlideTitles];
+                    if(!kadData.slideDescs) kadData.slideDescs = [...defaultSlideDescs];
                 } else {
                     kadData = { ...defaultData, nama: currentUserInfo.displayName || 'Pengguna' };
                     await setDoc(docRef, kadData);
@@ -1280,9 +1305,17 @@
             kadData.customUrl = cUrl ? cUrl.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase() : '';
             
             if(!kadData.gambarTabs) kadData.gambarTabs = [];
+            if(!kadData.slideTitles) kadData.slideTitles = [];
+            if(!kadData.slideDescs) kadData.slideDescs = [];
+            
             for(let i=1; i<=5; i++) {
                 let imgVal = document.getElementById('admin-gambar-'+i).value;
+                let tVal = document.getElementById('admin-slide-title-'+i).value;
+                let dVal = document.getElementById('admin-slide-desc-'+i).value;
+                
                 kadData.gambarTabs[i-1] = imgVal || defaultData.gambarTabs[i-1];
+                kadData.slideTitles[i-1] = tVal || defaultSlideTitles[i-1];
+                kadData.slideDescs[i-1] = (dVal || defaultSlideDescs[i-1]).replace(/\n/g, '<br>');
             }
             
             kadData.qrText = document.getElementById('admin-qr-text').value || defaultData.qrText;
@@ -1408,9 +1441,8 @@
             let tajuk = document.getElementById('tab-title');
             let pantun = document.getElementById('teks-pantun');
             if(tajuk && pantun) {
-                if(currentSlide === 0) { tajuk.innerText = "Famili"; pantun.innerHTML = "Pergi ke pekan membeli ketupat,<br>Singgah sebentar membeli pegaga;<br>Andai ada silap dan khilaf terbuat,<br>Maaf dipinta dari hati sekeluarga."; }
-                else if(currentSlide === 1) { tajuk.innerText = "Sahabat"; pantun.innerHTML = "Jauh di mata dekat di hati,<br>Salam kemaafan pengganti diri."; }
-                else { tajuk.innerText = "Memori " + (currentSlide+1); pantun.innerHTML = "Kenangan manis di pagi raya,<br>Kekal terpahat selamanya."; }
+                tajuk.innerText = (kadData && kadData.slideTitles && kadData.slideTitles[currentSlide]) ? kadData.slideTitles[currentSlide] : defaultSlideTitles[currentSlide];
+                pantun.innerHTML = (kadData && kadData.slideDescs && kadData.slideDescs[currentSlide]) ? kadData.slideDescs[currentSlide] : defaultSlideDescs[currentSlide];
             }
         };
 
@@ -1618,7 +1650,9 @@
             if(el = document.getElementById('admin-custom-url')) el.value = kadData.customUrl || '';
             
             for(let i=1; i<=5; i++) {
-                if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultTemaImages[i-1];
+                if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultData.gambarTabs[i-1];
+                if(el = document.getElementById('admin-slide-title-'+i)) el.value = (kadData.slideTitles && kadData.slideTitles[i-1]) ? kadData.slideTitles[i-1] : defaultSlideTitles[i-1];
+                if(el = document.getElementById('admin-slide-desc-'+i)) el.value = ((kadData.slideDescs && kadData.slideDescs[i-1]) ? kadData.slideDescs[i-1] : defaultSlideDescs[i-1]).replace(/<br>/g, '\n');
             }
             
             if(el = document.getElementById('admin-qr-text')) el.value = kadData.qrText || defaultData.qrText;
