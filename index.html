@@ -9,16 +9,18 @@
     
     <style>
         :root {
-            /* Tema Lalai (Zamrud Magis) - Boleh diubah via JS */
-            --primary-yellow: #FFDF00;
-            --primary-yellow-glow: rgba(255, 223, 0, 0.8);
-            --gradient-gold: linear-gradient(135deg, #FFF176, #FFB300);
-            --glass-bg: rgba(6, 61, 30, 0.25); 
-            --glass-border: rgba(255, 223, 0, 0.35);
-            --glass-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.4);
+            /* Tema Islamik Hijau & Emas (Flamel Inspired) */
+            --primary-green: #114232;
+            --light-green: #1A533D;
+            --primary-gold: #D4AF37;
+            --gold-glow: rgba(212, 175, 55, 0.6);
+            --bg-cream: #FDFBF7; 
+            --panel-bg: #F4F1E1;
             
+            --text-dark: #0f291e;
+            --text-muted-dark: #4a5d54;
             --text-light: #ffffff;
-            --text-muted: #d1d5db;
+            
             --font-body: 'Plus Jakarta Sans', sans-serif;
             --font-heading: 'Playfair Display', serif;
             --font-script: 'Great Vibes', cursive;
@@ -27,37 +29,35 @@
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: var(--font-body); color: var(--text-light);
+            font-family: var(--font-body); color: var(--text-dark);
             display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; position: relative;
-            background-color: #000;
+            background-color: var(--primary-green);
         }
 
-        /* --- Latar Belakang Animasi --- */
+        /* --- Latar Belakang Animasi Hijau Eksklusif --- */
         .bg-animated {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden;
-            background: radial-gradient(circle at top right, #0a4f26 0%, #011409 100%);
+            background: radial-gradient(circle at top right, #1A533D 0%, #0A1F16 100%);
             transition: background 0.8s ease; 
         }
         .islamic-pattern {
             position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background-image: url('https://www.transparenttextures.com/patterns/arabesque.png');
-            opacity: 0.15; animation: rotateBg 180s linear infinite;
+            opacity: 0.2; animation: rotateBg 180s linear infinite;
         }
         .moon {
-            position: absolute; top: 40px; right: 30px; font-size: 8rem; color: rgba(255, 255, 255, 0.2);
-            filter: drop-shadow(0 0 40px var(--primary-yellow)); animation: floatMoon 6s ease-in-out infinite alternate;
-            transition: filter 0.8s ease;
+            position: absolute; top: 40px; right: 30px; font-size: 8rem; color: rgba(212, 175, 55, 0.15);
+            filter: drop-shadow(0 0 30px var(--primary-gold)); animation: floatMoon 6s ease-in-out infinite alternate;
         }
         .firefly {
-            position: absolute; background: var(--primary-yellow); border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary-yellow), 0 0 20px #FFF; animation: drift ease-in-out infinite alternate;
-            transition: background 0.8s ease, box-shadow 0.8s ease;
+            position: absolute; background: var(--primary-gold); border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary-gold), 0 0 20px #FFF; animation: drift ease-in-out infinite alternate;
         }
         .orb {
-            position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.45; animation: float 12s infinite alternate ease-in-out;
+            position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.3; animation: float 12s infinite alternate ease-in-out;
         }
-        .orb-1 { width: 350px; height: 350px; background: var(--primary-yellow); top: -50px; left: -100px; animation-delay: 0s; transition: background 0.8s ease; }
-        .orb-2 { width: 450px; height: 450px; background: rgba(255,255,255,0.2); bottom: -150px; right: -100px; animation-delay: -4s; }
+        .orb-1 { width: 350px; height: 350px; background: var(--primary-gold); top: -50px; left: -100px; animation-delay: 0s; }
+        .orb-2 { width: 450px; height: 450px; background: #2E8B57; bottom: -150px; right: -100px; animation-delay: -4s; }
 
         @keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes floatMoon { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-15px) scale(1.05); } }
@@ -73,69 +73,77 @@
         .page-container.active { display: flex; opacity: 1; }
 
         /* --- HALAMAN: LOADING --- */
-        #page-loading { justify-content: center; align-items: center; }
-        .spinner { border: 4px solid rgba(255, 255, 255, 0.3); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--primary-yellow); animation: spin 1s linear infinite; }
+        #page-loading { justify-content: center; align-items: center; color: white;}
+        .spinner { border: 4px solid rgba(212, 175, 55, 0.3); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--primary-gold); animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- GAYA PANEL KRIM & EMAS --- */
+        .glass-panel { 
+            background: var(--bg-cream); 
+            border: 2px solid var(--primary-gold); 
+            border-radius: 28px; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.1); 
+            padding: 25px; position: relative; overflow: hidden; transition: all 0.8s ease; 
+        }
 
         /* --- HALAMAN 1: LOG MASUK --- */
         #page-login { justify-content: center; align-items: center; padding: 20px; }
         .login-box {
-            background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
-            border-radius: 28px; padding: 40px 25px; text-align: center; width: 100%; box-shadow: var(--glass-shadow);
-            transition: all 0.8s ease;
+            background: var(--bg-cream); border: 2px solid var(--primary-gold);
+            border-radius: 28px; padding: 40px 25px; text-align: center; width: 100%; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
-        .login-box h1 { font-family: var(--font-heading); font-size: 2rem; color: var(--primary-yellow); margin-bottom: 10px; transition: color 0.8s ease;}
-        .login-box p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 30px; line-height: 1.5; }
+        .login-box h1 { font-family: var(--font-heading); font-size: 2.2rem; color: var(--primary-green); margin-bottom: 10px; }
+        .login-box p { font-size: 0.95rem; color: var(--text-muted-dark); margin-bottom: 30px; line-height: 1.5; font-weight: 500;}
         .btn-google {
-            background: white; color: #333; border: none; padding: 14px 20px; border-radius: 30px; width: 100%;
+            background: white; color: #333; border: 2px solid #ddd; padding: 14px 20px; border-radius: 30px; width: 100%;
             font-family: var(--font-body); font-weight: 700; font-size: 1.05rem; cursor: pointer;
-            display: flex; justify-content: center; align-items: center; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.3s;
+            display: flex; justify-content: center; align-items: center; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.3s;
         }
         .btn-google img { width: 24px; height: 24px; }
-        .btn-google:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255,255,255,0.2); }
+        .btn-google:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); border-color: var(--primary-gold);}
         .btn-google:active { transform: scale(0.97); }
-        .admin-link { margin-top: 20px; font-size: 0.85rem; color: rgba(255,255,255,0.5); text-decoration: underline; cursor: pointer; transition: 0.3s; }
-        .admin-link:hover { color: var(--primary-yellow); }
+        .admin-link { margin-top: 20px; font-size: 0.85rem; color: var(--primary-green); opacity: 0.7; text-decoration: underline; cursor: pointer; transition: 0.3s; font-weight: 600;}
+        .admin-link:hover { opacity: 1; color: var(--primary-gold); }
 
         /* --- HALAMAN 2: DASHBOARD --- */
         #page-dashboard { padding: 40px 20px 20px; }
         .dash-header { text-align: center; margin-bottom: 30px; }
-        .dash-header h2 { font-family: var(--font-heading); color: var(--primary-yellow); font-size: 1.8rem; transition: color 0.8s ease;}
-        .dash-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+        .dash-header h2 { font-family: var(--font-heading); color: var(--primary-gold); font-size: 1.8rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
+        .dash-header p { color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 5px; }
+        
         .theme-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .theme-card { background: rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.3s; position: relative; }
-        .theme-card:hover { border-color: rgba(255,255,255,0.5); transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .theme-image { height: 120px; background: #111; position: relative; }
-        .theme-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: opacity 0.3s; }
+        .theme-card { background: var(--bg-cream); border: 2px solid transparent; border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.3s; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+        .theme-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .theme-image { height: 120px; background: #111; position: relative; border-bottom: 3px solid var(--primary-gold);}
+        .theme-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: opacity 0.3s; }
         .theme-card:hover .theme-image img { opacity: 1; }
-        .theme-info { padding: 15px; background: rgba(0,0,0,0.6); }
-        .theme-info h3 { color: white; font-size: 1.1rem; margin-bottom: 5px; font-family: var(--font-heading); }
-        .theme-info p { color: #aaa; font-size: 0.8rem; }
+        .theme-info { padding: 15px; background: var(--bg-cream); }
+        .theme-info h3 { color: var(--primary-green); font-size: 1.1rem; margin-bottom: 5px; font-family: var(--font-heading); font-weight: 700;}
+        .theme-info p { color: var(--text-muted-dark); font-size: 0.8rem; font-weight: 500;}
         
-        .badge-active { position: absolute; top: 10px; right: 10px; background: var(--primary-yellow); color: #000; font-size: 0.7rem; font-weight: bold; padding: 5px 12px; border-radius: 20px; display: none; z-index: 2; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .badge-active { position: absolute; top: 10px; right: 10px; background: var(--primary-gold); color: #000; font-size: 0.7rem; font-weight: bold; padding: 5px 12px; border-radius: 20px; display: none; z-index: 2; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         .theme-card.selected .badge-active { display: block; }
-        .theme-card.selected { border-color: var(--primary-yellow); box-shadow: 0 0 20px var(--glass-border); }
+        .theme-card.selected { border-color: var(--primary-gold); box-shadow: 0 0 20px var(--gold-glow); }
         
-        .btn-logout { background: transparent; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 20px; width: 100%; margin-top: 30px; cursor: pointer; transition: 0.3s; }
-        .btn-logout:hover { background: rgba(255,0,0,0.2); color: white; border-color: rgba(255,0,0,0.5); }
+        .btn-logout { background: transparent; color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.4); padding: 10px; border-radius: 20px; width: 100%; margin-top: 30px; cursor: pointer; transition: 0.3s; font-weight: 600;}
+        .btn-logout:hover { background: rgba(255,0,0,0.8); color: white; border-color: transparent; }
 
         /* --- HALAMAN 3: EDITOR KAD --- */
         .header-kad { text-align: center; padding: 30px 15px 15px; z-index: 10; position: relative; }
-        .header-kad h1 { font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: background 0.8s ease; }
-        .header-kad p { font-size: 0.95rem; color: var(--text-muted); }
-        .header-kad p strong { color: var(--primary-yellow); font-weight: 600; transition: color 0.8s ease;}
-        .script-text { font-family: var(--font-script); font-size: 2.2rem; color: var(--primary-yellow); text-shadow: 0 2px 5px rgba(0,0,0,0.5); margin-bottom: 10px; transition: color 0.8s ease;}
+        .header-kad h1 { font-family: var(--font-heading); font-size: 1.9rem; font-weight: 700; margin-bottom: 5px; color: var(--primary-gold); text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .header-kad p { font-size: 0.95rem; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8);}
+        .header-kad p strong { color: var(--primary-gold); font-weight: 700; font-size: 1.1rem;}
+        .script-text { font-family: var(--font-script); font-size: 2.4rem; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.5); margin-bottom: 10px; }
         
         .top-nav-editor { position: absolute; top: 15px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; z-index: 100; }
         .nav-controls-right { display: flex; gap: 10px; }
-        .icon-btn { color: rgba(255,255,255,0.7); font-size: 1.2rem; cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.3); width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); }
-        .icon-btn:hover { color: var(--primary-yellow); background: rgba(0,0,0,0.5); border-color: var(--primary-yellow); transform: scale(1.05); }
+        .icon-btn { color: var(--primary-gold); font-size: 1.2rem; cursor: pointer; transition: 0.3s; background: rgba(17, 66, 50, 0.8); width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; border: 1px solid var(--primary-gold); box-shadow: 0 2px 5px rgba(0,0,0,0.5);}
+        .icon-btn:hover { background: var(--primary-gold); color: var(--primary-green); transform: scale(1.1); }
 
         .main-content { flex: 1; position: relative; padding: 10px 20px 20px; z-index: 5; }
         .view-section { display: none; opacity: 0; transform: translateY(25px); transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .view-section.active { display: block; opacity: 1; transform: translateY(0); }
-
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-top: 1px solid rgba(255, 255, 255, 0.4); border-left: 1px solid rgba(255, 255, 255, 0.2); border-radius: 28px; box-shadow: var(--glass-shadow), inset 0 0 20px rgba(255, 255, 255, 0.05); padding: 25px; position: relative; overflow: hidden; transition: all 0.8s ease; }
 
         .home-layout { position: relative; padding: 0;}
         
@@ -143,289 +151,135 @@
            ANIMASI & DIMENSI SLIDER CAROUSEL (AUTO-FIX 4:6)
            ======================================= */
         .carousel-container {
-            width: 100%;
-            max-width: 320px; /* Kunci lebar supaya tak terlalu besar di PC/Tablet */
-            aspect-ratio: 4 / 6; /* Kunci nisbah keseluruhan ke 4:6 */
-            margin: 0 auto 25px auto; /* Tengah-tengahkan */
-            overflow: visible; /* Penting supaya efek zoom tak terpotong */
-            position: relative;
+            width: 100%; max-width: 320px; aspect-ratio: 4 / 6; 
+            margin: 0 auto 25px auto; overflow: visible; position: relative;
         }
+        .carousel-track { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); width: 100%; cursor: grab; align-items: center; }
+        .carousel-track:active { cursor: grabbing; }
+        .carousel-slide { min-width: 100%; height: 100%; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background-color: transparent; position: relative; }
 
-        .carousel-track {
-            display: flex;
-            height: 100%; /* Penuhi bekas 4:6 */
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            width: 100%;
-            cursor: grab;
-            align-items: center; 
-        }
-        
-        .carousel-track:active {
-            cursor: grabbing;
-        }
-
-        .carousel-slide {
-            min-width: 100%;
-            height: 100%; /* Penuhi tinggi carousel track */
-            flex-shrink: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: transparent; /* Buang bg gelap */
-            position: relative;
-        }
-
-        /* Imej di dalam slider - Memenuhi ruang dengan betul */
         .carousel-slide img {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Auto crop untuk elak gambar meregang/panjang */
-            object-position: center center; 
-            border-radius: 20px;
-            display: block;
-            border: 3px solid rgba(255,255,255,0.2);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            
-            /* Animasi asal (ketika tidak aktif / sedang slide) */
-            transform: scale(0.85); 
-            opacity: 0.4; 
-            filter: blur(2px) brightness(0.6);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; object-position: center center; 
+            border-radius: 16px; display: block;
+            border: 4px solid var(--primary-gold);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            transform: scale(0.85); opacity: 0.5; filter: blur(2px) brightness(0.7);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        /* Kesan pop-up & terang pada slide yang aktif di tengah */
         .carousel-slide.active-slide img {
-            transform: scale(1);
-            opacity: 1;
-            filter: blur(0) brightness(1);
-            border-color: var(--primary-yellow);
-            box-shadow: 0 15px 35px var(--glass-border);
+            transform: scale(1); opacity: 1; filter: blur(0) brightness(1);
+            box-shadow: 0 15px 35px var(--gold-glow);
         }
         
-        /* Navigation Dots */
-        .carousel-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 15px; /* Alih sikit supaya tak sentuh gambar */
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-        
-        .dot.active {
-            background-color: var(--primary-yellow);
-            transform: scale(1.3);
-        }
+        .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 15px; margin-bottom: 20px; position: relative; z-index: 10; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background-color: rgba(17, 66, 50, 0.3); cursor: pointer; transition: all 0.3s ease; }
+        .dot.active { background-color: var(--primary-green); border: 2px solid var(--primary-gold); transform: scale(1.3); }
 
-        .media-container video { width: 100%; display: block; border-radius: 20px; margin-bottom: 25px; border: 3px solid var(--glass-border); }
-        .intro-text { font-size: 1.05rem; line-height: 1.6; margin-bottom: 25px; font-weight: 400; text-align: center; color: #f9fafb; }
+        .media-container video { width: 100%; display: block; border-radius: 16px; margin-bottom: 25px; border: 3px solid var(--primary-gold); }
         
-        /* EFEK ANIMASI 2: Teks Melenting (Bounce Pop-up) */
-        .tab-content-wrapper { 
-            text-align: center; 
-            opacity: 0; /* Mula sebagai tersembunyi untuk reset animasi */
-        }
-        
-        .animate-text-pop {
-            animation: bouncePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        
-        @keyframes bouncePop {
-            0% { transform: translateY(30px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
+        /* Teks & Pantun */
+        .intro-text { font-size: 1.05rem; line-height: 1.6; margin-bottom: 25px; font-weight: 500; text-align: center; color: var(--text-dark); }
+        .tab-content-wrapper { text-align: center; opacity: 0; }
+        .animate-text-pop { animation: bouncePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes bouncePop { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 
-        .tab-content-wrapper h2 { font-family: var(--font-heading); color: var(--primary-yellow); font-size: 1.6rem; margin-bottom: 15px; transition: color 0.8s ease;}
-        .pantun { font-size: 1rem; line-height: 1.8; font-weight: 400; color: #e5e7eb; font-style: italic; }
+        .tab-content-wrapper h2 { font-family: var(--font-heading); color: var(--primary-green); font-size: 1.8rem; margin-bottom: 10px; font-weight: 800;}
+        .pantun { font-size: 1.05rem; line-height: 1.8; font-weight: 500; color: var(--text-muted-dark); font-style: italic; }
 
-        .form-title { font-family: var(--font-heading); text-align: center; color: var(--primary-yellow); margin-bottom: 25px; font-size: 1.5rem; transition: color 0.8s ease;}
+        /* Borang */
+        .form-title { font-family: var(--font-heading); text-align: center; color: var(--primary-green); margin-bottom: 25px; font-size: 1.6rem; font-weight: 800;}
         .form-group { margin-bottom: 20px; position: relative; }
-        .form-group input, .form-group textarea { width: 100%; padding: 15px 18px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 2px solid var(--glass-border); border-radius: 12px; color: white; font-family: var(--font-body); font-size: 1rem; transition: all 0.3s; }
-        .form-group input:focus, .form-group textarea:focus { outline: none; background: rgba(0,0,0,0.5); border-color: var(--primary-yellow); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .form-group input, .form-group textarea { 
+            width: 100%; padding: 15px 18px; 
+            background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; 
+            color: var(--text-dark); font-family: var(--font-body); font-size: 1rem; font-weight: 500; transition: all 0.3s; 
+        }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-gold); box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2); }
         .form-group textarea { resize: vertical; min-height: 100px; }
-        .btn-action { background: var(--gradient-gold); color: #000; border: none; padding: 14px 28px; border-radius: 30px; width: 100%; font-weight: 700; font-size: 1.05rem; cursor: pointer; box-shadow: 0 5px 20px var(--primary-yellow-glow); transition: all 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .btn-action:active { transform: scale(0.97); }
         
+        /* GAYA BUTANG HIJAU EMAS EKSKLUSIF */
+        .btn-action, .btn-create-own, .btn-save { 
+            background: var(--primary-green); 
+            color: var(--primary-gold); 
+            border: 2px solid var(--primary-gold); 
+            padding: 14px 28px; border-radius: 30px; width: 100%; font-weight: 800; font-size: 1.05rem; cursor: pointer; 
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 5px 15px rgba(0,0,0,0.2); 
+            transition: all 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; 
+        }
+        .btn-action:hover, .btn-save:hover { background: var(--light-green); transform: translateY(-2px); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2), 0 8px 20px rgba(0,0,0,0.3); }
+        .btn-action:active, .btn-create-own:active { transform: scale(0.97); }
+
+        @keyframes pulseGlowBtn { 
+            0% { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 0 0 0 rgba(212, 175, 55, 0.7); } 
+            70% { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 0 0 15px rgba(212, 175, 55, 0); } 
+            100% { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 0 0 0 rgba(212, 175, 55, 0); } 
+        }
+
+        .btn-create-own {
+            padding: 12px 20px; font-size: 0.9rem; margin: 0 auto 25px auto; width: fit-content;
+            animation: pulseGlowBtn 2.5s infinite;
+        }
+        .btn-create-own i { color: #fff; }
+
+        /* Senarai Ucapan */
         .ucapan-list { margin-top: 35px; display: flex; flex-direction: column; gap: 18px; }
-        .ucapan-item { background: rgba(255,255,255,0.08); padding: 18px; border-radius: 20px; border-left: 5px solid var(--primary-yellow); backdrop-filter: blur(10px); transition: border-color 0.8s ease;}
-        .ucapan-item strong { font-family: var(--font-heading); color: var(--primary-yellow); display: block; font-size: 1.2rem; margin-bottom: 6px; transition: color 0.8s ease;}
-        .ucapan-item p { margin: 0; font-size: 0.95rem; font-weight: 300; line-height: 1.6; color: #f3f4f6; }
+        .ucapan-item { background: #fff; padding: 18px; border-radius: 16px; border-left: 6px solid var(--primary-green); box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+        .ucapan-item strong { font-family: var(--font-heading); color: var(--primary-green); display: block; font-size: 1.2rem; margin-bottom: 6px; font-weight: 800;}
+        .ucapan-item p { margin: 0; font-size: 0.95rem; font-weight: 500; line-height: 1.6; color: var(--text-muted-dark); }
         
-        .qr-wrapper { background: linear-gradient(135deg, #ffffff, #f0f0f0); padding: 20px; border-radius: 24px; display: inline-block; margin: 25px 0; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 4px solid var(--primary-yellow); transition: border-color 0.8s ease;}
+        .qr-wrapper { background: #fff; padding: 20px; border-radius: 20px; display: inline-block; margin: 25px 0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 3px solid var(--primary-gold); }
         .qr-wrapper img { max-width: 230px; border-radius: 12px; display: block; }
 
-        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 450px; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-top: 1px solid rgba(255, 255, 255, 0.15); display: flex; justify-content: space-around; padding: 12px 10px; border-radius: 35px; z-index: 100; box-shadow: 0 15px 40px rgba(0,0,0,0.6); display: none; transition: border-color 0.8s ease; }
+        /* NAV BAWAH */
+        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 450px; background: var(--bg-cream); border: 2px solid var(--primary-gold); display: flex; justify-content: space-around; padding: 12px 10px; border-radius: 35px; z-index: 100; box-shadow: 0 15px 40px rgba(0,0,0,0.5); display: none; }
         .bottom-nav.active { display: flex; animation: slideUpNav 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 0.75rem; font-weight: 600; gap: 8px; cursor: pointer; transition: all 0.4s; width: 65px; height: 55px; border-radius: 20px; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted-dark); font-size: 0.75rem; font-weight: 700; gap: 8px; cursor: pointer; transition: all 0.4s; width: 65px; height: 55px; border-radius: 20px; }
         .nav-item i { font-size: 1.4rem; transition: transform 0.3s; }
-        .nav-item.active { color: #000; background: var(--gradient-gold); box-shadow: 0 5px 15px var(--primary-yellow-glow); }
+        .nav-item.active { color: var(--primary-gold); background: var(--primary-green); box-shadow: 0 5px 15px rgba(17, 66, 50, 0.4); }
         .nav-item.active i { transform: scale(1.15); }
 
+        /* MODAL ADMIN */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.4s; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); color: white; width: 100%; max-width: 420px; padding: 25px; border-radius: 28px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.8); transform: scale(0.85) translateY(20px); transition: all 0.4s; }
+        .modal-content { background: var(--bg-cream); border: 2px solid var(--primary-gold); color: var(--text-dark); width: 100%; max-width: 420px; padding: 25px; border-radius: 28px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.8); transform: scale(0.85) translateY(20px); transition: all 0.4s; }
         .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
-        .modal-content h2 { font-family: var(--font-heading); margin-bottom: 20px; color: var(--primary-yellow); text-align: center; font-size: 1.5rem; }
+        .modal-content h2 { font-family: var(--font-heading); margin-bottom: 20px; color: var(--primary-green); text-align: center; font-size: 1.6rem; font-weight: 800;}
         
-        /* Groups for Admin Modal */
-        .admin-group { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 15px 15px 5px 15px; margin-bottom: 20px; }
-        .admin-group h3 { color: var(--primary-yellow); font-size: 0.95rem; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; font-family: var(--font-body); display: flex; align-items: center; gap: 8px;}
-        .admin-group label { display: block; font-size: 0.8rem; margin-bottom: 8px; color: rgba(255,255,255,0.8); font-weight: 600; }
+        .admin-group { background: #fff; border: 1px solid #e5e7eb; border-radius: 15px; padding: 15px 15px 5px 15px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+        .admin-group h3 { color: var(--primary-green); font-size: 0.95rem; margin-bottom: 15px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; font-family: var(--font-body); display: flex; align-items: center; gap: 8px;}
+        .admin-group label { display: block; font-size: 0.8rem; margin-bottom: 8px; color: var(--text-muted-dark); font-weight: 700; }
         
-        /* Upload Button Styles */
-        .btn-upload { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: var(--primary-yellow); padding: 0 18px; border-radius: 12px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
-        .btn-upload:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
-        .btn-upload:active { transform: scale(0.95); }
+        .btn-upload { background: var(--primary-green); border: none; color: var(--primary-gold); padding: 0 18px; border-radius: 12px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
+        .btn-upload:hover { background: var(--light-green); }
 
         .modal-actions { display: flex; justify-content: space-between; margin-top: 10px; gap: 15px; }
-        .btn-close { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); flex: 1; padding: 14px; border-radius: 14px; cursor: pointer; transition: 0.3s; font-weight: 600; }
-        .btn-save { background: var(--gradient-gold); color: #000; font-weight: 700; border: none; flex: 1; padding: 14px; border-radius: 14px; cursor: pointer; }
+        .btn-close { background: #e5e7eb; color: var(--text-dark); border: none; flex: 1; padding: 14px; border-radius: 14px; cursor: pointer; transition: 0.3s; font-weight: 700; }
+        .btn-close:hover { background: #d1d5db; }
 
-        /* Animasi Tambahan */
         @keyframes slideUpNav { from { bottom: -100px; opacity: 0; } to { bottom: 15px; opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulseGlowBtn { 
-            0% { box-shadow: 0 0 0 0 rgba(255, 223, 0, 0.7); } 
-            70% { box-shadow: 0 0 0 15px rgba(255, 223, 0, 0); } 
-            100% { box-shadow: 0 0 0 0 rgba(255, 223, 0, 0); } 
-        }
-
-        /* Butang Buat Kad Sendiri */
-        .btn-create-own {
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-            background: linear-gradient(135deg, #FFDF00, #FF9900);
-            color: #000; text-decoration: none; padding: 10px 18px;
-            border-radius: 30px; font-family: var(--font-body); font-weight: 700; font-size: 0.8rem;
-            margin: 0 auto 25px auto; width: fit-content;
-            box-shadow: 0 5px 15px rgba(255, 223, 0, 0.4);
-            animation: pulseGlowBtn 2s infinite;
-            transition: all 0.3s;
-        }
-        .btn-create-own:hover {
-            transform: translateY(-3px) scale(1.05);
-            background: linear-gradient(135deg, #FFF176, #FFB300);
-        }
-        .btn-create-own:active { transform: scale(0.95); }
-
-        /* SUPER ADMIN STYLES */
-        .admin-user-item { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary-yellow); transition: 0.3s; }
-        .admin-user-item:hover { background: rgba(0,0,0,0.5); transform: translateX(5px); }
-        .admin-user-item strong { color: var(--primary-yellow); font-size: 1.1rem; }
-        .admin-user-item small { color: rgba(255,255,255,0.5); font-size: 0.75rem; }
-        .btn-delete { background: rgba(255, 59, 48, 0.8); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; }
-        .btn-delete:hover { background: rgba(255, 59, 48, 1); transform: scale(1.05); }
-
-        /* Banner Iklan */
-        .ad-banner {
-            position: absolute;
-            bottom: 85px;
-            width: 100%;
-            text-align: center;
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.6);
-            z-index: 10;
-        }
         
-        .ad-banner a {
-            color: var(--primary-yellow);
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        .ad-banner a:hover {
-            text-decoration: underline;
-        }
+        .admin-user-item { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--primary-green); box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; }
+        .admin-user-item strong { color: var(--primary-green); font-size: 1.1rem; }
+        .admin-user-item small { color: var(--text-muted-dark); font-size: 0.75rem; }
+        .btn-delete { background: rgba(255, 59, 48, 0.1); color: #ff3b30; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+        .btn-delete:hover { background: #ff3b30; color: white;}
+
+        .ad-banner { position: absolute; bottom: 85px; width: 100%; text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.8); z-index: 10; }
+        .ad-banner a { color: var(--primary-gold); text-decoration: none; font-weight: bold; }
+        .ad-banner a:hover { text-decoration: underline; }
         
         /* Overlay Intro Video */
-        #intro-video-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #000;
-            z-index: 9999;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        #intro-video-element {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .btn-skip-intro {
-            position: absolute;
-            bottom: 80px; /* Di atas sedikit dari dasar */
-            left: 50%; /* Letak ke tengah skrin */
-            transform: translateX(-50%); /* Penjajaran tepat di tengah */
-            background: rgba(0,0,0,0.6);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 10px 25px;
-            border-radius: 30px;
-            font-family: var(--font-body);
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 10000;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .btn-skip-intro:hover {
-            background: var(--primary-yellow);
-            color: #000;
-            border-color: var(--primary-yellow);
-        }
-        
-        .play-overlay-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255,255,255,0.2);
-            color: white;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2rem;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(255,255,255,0.5);
-            z-index: 10000;
-            transition: all 0.3s;
-        }
-        
-        .play-overlay-btn:hover {
-            background: var(--primary-yellow);
-            color: #000;
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-
+        #intro-video-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--primary-green); z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        #intro-video-element { width: 100%; height: 100%; object-fit: cover; }
+        .btn-skip-intro { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--primary-green); color: var(--primary-gold); border: 2px solid var(--primary-gold); padding: 10px 25px; border-radius: 30px; font-family: var(--font-body); font-weight: 700; cursor: pointer; z-index: 10000; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.3s; white-space: nowrap; }
+        .btn-skip-intro:hover { background: var(--primary-gold); color: var(--primary-green); }
+        .play-overlay-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(17, 66, 50, 0.8); color: var(--primary-gold); width: 80px; height: 80px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; cursor: pointer; border: 2px solid var(--primary-gold); z-index: 10000; transition: all 0.3s; }
+        .play-overlay-btn:hover { background: var(--primary-gold); color: var(--primary-green); transform: translate(-50%, -50%) scale(1.1); }
     </style>
 </head>
 <body>
 
-    <!-- Latar Belakang Global -->
     <div class="bg-animated">
         <div class="islamic-pattern"></div>
         <div class="orb orb-1"></div>
@@ -434,9 +288,7 @@
         <div id="stars-container"></div>
     </div>
     
-    <!-- Video Intro Overlay -->
     <div id="intro-video-overlay">
-        <!-- Tambah autoplay untuk percubaan automatik -->
         <video id="intro-video-element" playsinline autoplay>
             <source src="" type="video/mp4">
         </video>
@@ -446,17 +298,11 @@
         <button class="btn-skip-intro" onclick="tutupVideoIntro()">Langkau Intro <i class="fa-solid fa-forward-step"></i></button>
     </div>
 
-    <!-- ============================================== -->
-    <!-- HALAMAN LOADING                                -->
-    <!-- ============================================== -->
     <div id="page-loading" class="page-container active">
         <div class="spinner"></div>
-        <p style="margin-top: 15px; font-weight: 300;">Memuatkan Platform...</p>
+        <p style="margin-top: 15px; font-weight: 500;">Memuatkan Platform...</p>
     </div>
 
-    <!-- ============================================== -->
-    <!-- HALAMAN 1: LOG MASUK                           -->
-    <!-- ============================================== -->
     <div id="page-login" class="page-container">
         <div class="login-box">
             <h1>Cipta Kad Raya Digital</h1>
@@ -467,7 +313,6 @@
                 Teruskan dengan Google
             </button>
 
-            <!-- Pautan Admin -->
             <div class="admin-link" onclick="logMasukSuperAdmin()">
                 Log Masuk Admin Sistem
             </div>
@@ -478,9 +323,6 @@
         </div>
     </div>
 
-    <!-- ============================================== -->
-    <!-- HALAMAN SUPER ADMIN (PAPAN PEMUKA UTAMA)       -->
-    <!-- ============================================== -->
     <div id="page-superadmin" class="page-container">
         <div class="top-nav-editor">
             <div class="icon-btn" onclick="kembaliKeLogin()" title="Kembali"><i class="fa-solid fa-arrow-left"></i></div>
@@ -491,9 +333,8 @@
             <p>Urus pendaftaran pengguna platform.</p>
         </div>
 
-        <!-- Tetapan Imej Tema Global -->
         <div class="glass-panel" style="margin: 0 20px 20px 20px;">
-             <h3 style="color: var(--primary-yellow); margin-bottom: 15px; font-weight: 500;"><i class="fa-solid fa-palette"></i> Tetapan Imej Tema Global</h3>
+             <h3 style="color: var(--primary-green); margin-bottom: 15px; font-weight: 800;"><i class="fa-solid fa-palette"></i> Tetapan Imej Tema Global</h3>
              <div class="form-group" style="margin-bottom: 10px;">
                 <label>URL Kulit Tema 1</label>
                 <div style="display:flex; gap:8px;">
@@ -538,19 +379,16 @@
         </div>
 
         <div class="glass-panel" style="margin: 0 20px;">
-            <h3 style="color: var(--primary-yellow); margin-bottom: 10px; font-weight: 500;">Jumlah Pengguna</h3>
-            <h1 id="admin-total-users" style="font-size: 3.5rem; margin-bottom: 25px; font-family: var(--font-heading);">0</h1>
+            <h3 style="color: var(--primary-green); margin-bottom: 10px; font-weight: 800;">Jumlah Pengguna</h3>
+            <h1 id="admin-total-users" style="font-size: 3.5rem; margin-bottom: 25px; font-family: var(--font-heading); color: var(--primary-gold);">0</h1>
 
-            <h3 style="color: var(--primary-yellow); margin-bottom: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; font-weight: 500;">Senarai Pengguna</h3>
+            <h3 style="color: var(--primary-green); margin-bottom: 15px; border-top: 1px solid #e5e7eb; padding-top: 25px; font-weight: 800;">Senarai Pengguna</h3>
             <div id="admin-user-list" style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
-                <p style="color: rgba(255,255,255,0.5);">Memuatkan data pengguna...</p>
+                <p style="color: var(--text-muted-dark);">Memuatkan data pengguna...</p>
             </div>
         </div>
     </div>
 
-    <!-- ============================================== -->
-    <!-- HALAMAN 2: DASHBOARD (PILIHAN TEMA)            -->
-    <!-- ============================================== -->
     <div id="page-dashboard" class="page-container">
         <div class="dash-header">
             <h2>Selamat Datang, <br><span id="dash-nama-user" style="color: white; font-size: 1.4rem;">Pengguna</span></h2>
@@ -558,7 +396,6 @@
         </div>
 
         <div class="theme-grid">
-            <!-- TEMA 1 -->
             <div class="theme-card selected" id="card-tema1" onclick="pilihTema('tema1')">
                 <div class="badge-active">Terpilih</div>
                 <div class="theme-image"><img id="preview-tema1" src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=800" alt="Tema 1"></div>
@@ -568,7 +405,6 @@
                 </div>
             </div>
             
-            <!-- TEMA 2 -->
             <div class="theme-card" id="card-tema2" onclick="pilihTema('tema2')">
                 <div class="badge-active">Terpilih</div>
                 <div class="theme-image"><img id="preview-tema2" src="https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&q=80&w=800" alt="Tema 2"></div>
@@ -578,7 +414,6 @@
                 </div>
             </div>
 
-            <!-- TEMA 3 -->
             <div class="theme-card" id="card-tema3" onclick="pilihTema('tema3')">
                 <div class="badge-active">Terpilih</div>
                 <div class="theme-image"><img id="preview-tema3" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800" alt="Tema 3"></div>
@@ -588,7 +423,6 @@
                 </div>
             </div>
 
-            <!-- TEMA 4 -->
             <div class="theme-card" id="card-tema4" onclick="pilihTema('tema4')">
                 <div class="badge-active">Terpilih</div>
                 <div class="theme-image"><img id="preview-tema4" src="https://images.unsplash.com/photo-1507608158173-1dcec673a2e5?auto=format&fit=crop&q=80&w=800" alt="Tema 4"></div>
@@ -598,7 +432,6 @@
                 </div>
             </div>
 
-            <!-- TEMA 5 -->
             <div class="theme-card" id="card-tema5" onclick="pilihTema('tema5')">
                 <div class="badge-active">Terpilih</div>
                 <div class="theme-image"><img id="preview-tema5" src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800" alt="Tema 5"></div>
@@ -619,12 +452,8 @@
         </div>
     </div>
 
-    <!-- ============================================== -->
-    <!-- HALAMAN 3: EDITOR KAD                          -->
-    <!-- ============================================== -->
     <div id="page-kad" class="page-container">
         
-        <!-- Kawalan Pemilik Kad (Disembunyikan jika tetamu melihat pautan kongsi) -->
         <div class="top-nav-editor" id="nav-owner-controls">
             <div class="icon-btn" onclick="kembaliDashboard()" title="Kembali Dashboard"><i class="fa-solid fa-arrow-left"></i></div>
             <div class="nav-controls-right">
@@ -643,13 +472,12 @@
             <div id="view-home" class="view-section active">
                 <div class="home-layout">
                     
-                    <div class="glass-panel" style="padding: 15px;">
+                    <div class="glass-panel">
                         
                         <div class="media-container" id="video-container" style="display: none;">
                             <video id="display-video" controls><source src="" type="video/mp4"></video>
                         </div>
                         
-                        <!-- Slider Carousel (Nisbah 4:6 Auto-Fix) -->
                         <div class="carousel-container" id="image-carousel">
                             <div class="carousel-track" id="carousel-track">
                                 <div class="carousel-slide"><img id="slide-img-1" src="" alt="Slide 1"></div>
@@ -668,19 +496,16 @@
                             <div class="dot" onclick="pindahSlide(4)"></div>
                         </div>
 
-                        <!-- Butang Buat Kad Sendiri -->
                         <a href="https://kadraya.vercel.app/" target="_blank" class="btn-create-own">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> BUAT KAD DIGITAL RAYA (FREE)
                         </a>
 
                         <div id="tab-dynamic-content" style="transition: opacity 0.4s ease, transform 0.4s ease;">
-                            <!-- Bekas untuk teks beranimasi (Bouncy Pop-up) Slaid -->
                             <div class="tab-content-wrapper" id="anim-text-wrapper">
                                 <h2 id="tab-title">Famili</h2>
                                 <p class="pantun" id="teks-pantun"></p>
                             </div>
-                            <hr style="border-top: 1px dashed var(--glass-border); margin: 25px 0;">
-                            <!-- Teks Intro di bawah Slaid -->
+                            <hr style="border-top: 1px dashed #D4AF37; margin: 25px 0; opacity: 0.5;">
                             <p class="intro-text" id="display-intro"></p>
                         </div>
                     </div>
@@ -706,13 +531,11 @@
             </div>
         </div>
         
-        <!-- Iklan Footer di dalam Editor Kad -->
         <div class="ad-banner" style="position: static; margin-bottom: 20px;">
             Nak Buat Website atau Sistem? <br><a href="https://ummars.com" target="_blank">ummars.com</a>
         </div>
     </div>
 
-    <!-- Nav Bawah -->
     <nav class="bottom-nav" id="bottom-nav-bar">
         <div class="nav-item active" onclick="tukarViewVisual('view-home', this)"><i class="fa-solid fa-house"></i><span>Utama</span></div>
         <div class="nav-item" onclick="tukarViewVisual('view-ucapan', this)"><i class="fa-solid fa-envelope-open-text"></i><span>Ucapan</span></div>
@@ -720,12 +543,10 @@
         <div class="nav-item" id="btn-muzik" onclick="toggleMuzikLatar()"><i class="fa-solid fa-music" id="ikon-muzik"></i><span>Muzik</span></div>
     </nav>
 
-    <!-- Modal Admin (Dikelaskan Mengikut Kumpulan) -->
     <div class="modal-overlay" id="admin-modal">
         <div class="modal-content">
             <h2><i class="fa-solid fa-sliders"></i> Tetapan Kad</h2>
             
-            <!-- Kumpulan 1: Profil & Pengenalan -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-user"></i> Profil, Video & Audio</h3>
                 <div class="form-group"><label>Tajuk Utama</label><input type="text" id="admin-tajuk-utama" placeholder="Cth: Selamat Hari Raya Aidilfitri"></div>
@@ -735,32 +556,30 @@
                 <div class="form-group">
                     <label>URL Video MP4 (Intro Latar Penuh)</label>
                     <input type="text" id="admin-video" placeholder="Cth: Pautan Google Drive/Video...">
-                    <small style="color: rgba(255,255,255,0.5); font-size: 0.7rem; display: block; margin-top: 5px;">Video ini akan dimainkan pada skrin penuh (fullscreen) sebelum kad ini ditunjukkan.</small>
+                    <small style="color: var(--text-muted-dark); font-size: 0.7rem; display: block; margin-top: 5px;">Video ini akan dimainkan pada skrin penuh (fullscreen) sebelum kad ini ditunjukkan.</small>
                 </div>
                 <div class="form-group">
                     <label>Muzik Latar (Pilih dari senarai atau masukkan URL)</label>
-                    <select id="admin-pilihan-lagu" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; margin-bottom: 8px; font-family: var(--font-body);" onchange="document.getElementById('admin-muzik').value = this.value">
+                    <select id="admin-pilihan-lagu" style="width: 100%; padding: 12px; background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; color: var(--text-dark); margin-bottom: 8px; font-family: var(--font-body);" onchange="document.getElementById('admin-muzik').value = this.value">
                         <option value="">-- Memuatkan Koleksi Archive.org... --</option>
                     </select>
                     <input type="text" id="admin-muzik" placeholder="Cth: https://... (Pautan .mp3)">
-                    <small style="color: rgba(255,255,255,0.5); font-size: 0.7rem; display: block; margin-top: 5px;">Pilih lagu dari arkib atau letakkan pautan fail .mp3 anda sendiri.</small>
+                    <small style="color: var(--text-muted-dark); font-size: 0.7rem; display: block; margin-top: 5px;">Pilih lagu dari arkib atau letakkan pautan fail .mp3 anda sendiri.</small>
                 </div>
             </div>
 
-            <!-- Kumpulan 2: Tetapan Pautan (Custom URL) -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-link"></i> Tetapan Pautan Kongsi</h3>
                 <div class="form-group">
                     <label>ID Pautan Unik (Satu Perkataan)</label>
-                    <div style="display:flex; align-items:center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 0 10px;">
+                    <div style="display:flex; align-items:center; background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; padding: 0 10px;">
                         <span style="color: #aaa; font-size: 0.8rem; white-space: nowrap;">.../?id=</span>
-                        <input type="text" id="admin-custom-url" placeholder="cth: keluarga-zahidi" style="border:none; border-bottom:none; border-radius:0; padding:15px 5px; background: transparent; width:100%; color: white;" oninput="this.value = this.value.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase()">
+                        <input type="text" id="admin-custom-url" placeholder="cth: keluarga-zahidi" style="border:none; border-bottom:none; border-radius:0; padding:15px 5px; background: transparent; width:100%; color: var(--text-dark);" oninput="this.value = this.value.replace(/[^a-zA-Z0-9-]/g, '').toLowerCase()">
                     </div>
                     <small style="color: #888; font-size: 0.7rem; display: block; margin-top: 5px;">Hanya huruf, nombor dan sengkang (-) dibenarkan.</small>
                 </div>
             </div>
 
-            <!-- Kumpulan 4: Gambar Album / Slider -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-images"></i> Gambar Album (Slide 1-5)</h3>
                 
@@ -810,7 +629,6 @@
                 </div>
             </div>
 
-            <!-- Kumpulan 5: Duit Raya QR -->
             <div class="admin-group">
                 <h3><i class="fa-solid fa-wallet"></i> Duit Raya (QR)</h3>
                 <div class="form-group"><label>Teks Atas QR (Boleh Edit)</label><input type="text" id="admin-qr-text" placeholder="Contoh: Imbas untuk Duit Raya"></div>
@@ -831,26 +649,8 @@
         </div>
     </div>
 
-    <!-- Gunakan source tag kosong, URL akan diset melalui JavaScript -->
     <audio id="laguRaya" loop><source src="" type="audio/mpeg"></audio>
 
-    <!-- KELIP-KELIP MAGIS -->
-    <script>
-        const starsContainer = document.getElementById('stars-container');
-        for (let i = 0; i < 35; i++) {
-            let firefly = document.createElement('div');
-            firefly.className = 'firefly';
-            firefly.style.width = Math.random() * 4 + 2 + 'px';
-            firefly.style.height = firefly.style.width;
-            firefly.style.top = Math.random() * 100 + 'vh';
-            firefly.style.left = Math.random() * 100 + 'vw';
-            firefly.style.animationDuration = (Math.random() * 4 + 3) + 's';
-            firefly.style.animationDelay = Math.random() * 3 + 's';
-            starsContainer.appendChild(firefly);
-        }
-    </script>
-
-    <!-- FIREBASE MODULE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -1025,7 +825,6 @@
                     if (!currentUserInfo || currentUserInfo.uid !== 'demo_user_123') {
                         currentUserInfo = null;
                         kadData = null;
-                        window.terapkanTema('tema1'); 
                         paparHalaman('page-login');
                     }
                 }
@@ -1094,7 +893,6 @@
                 let navOwner = document.getElementById('nav-owner-controls');
                 if (navOwner) navOwner.style.display = 'none';
                 
-                window.terapkanTema(kadData.tema);
                 muatUIEditorKad();
                 paparHalaman('page-kad');
                 setupRealtimeUcapan(); 
@@ -1152,50 +950,12 @@
             });
         };
 
-        window.terapkanTema = (temaId) => {
-            const root = document.documentElement;
-            const bgAnimated = document.querySelector('.bg-animated');
-            
-            if(temaId === 'tema1') {
-                root.style.setProperty('--primary-yellow', '#FFDF00');
-                root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #FFF176, #FFB300)');
-                root.style.setProperty('--glass-bg', 'rgba(6, 61, 30, 0.25)');
-                root.style.setProperty('--glass-border', 'rgba(255, 223, 0, 0.35)');
-                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #0a4f26 0%, #011409 100%)';
-            } else if(temaId === 'tema2') {
-                root.style.setProperty('--primary-yellow', '#64ffda');
-                root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #a7ffeb, #1de9b6)');
-                root.style.setProperty('--glass-bg', 'rgba(13, 37, 63, 0.4)');
-                root.style.setProperty('--glass-border', 'rgba(100, 255, 218, 0.35)');
-                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #0d253f 0%, #020c1b 100%)';
-            } else if(temaId === 'tema3') {
-                root.style.setProperty('--primary-yellow', '#ffd700');
-                root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #ffea00, #ffb300)');
-                root.style.setProperty('--glass-bg', 'rgba(74, 14, 14, 0.4)');
-                root.style.setProperty('--glass-border', 'rgba(255, 215, 0, 0.35)');
-                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #4a0e0e 0%, #170202 100%)';
-            } else if(temaId === 'tema4') {
-                root.style.setProperty('--primary-yellow', '#ffea00');
-                root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #ffff8d, #ffea00)');
-                root.style.setProperty('--glass-bg', 'rgba(179, 89, 0, 0.3)');
-                root.style.setProperty('--glass-border', 'rgba(255, 234, 0, 0.35)');
-                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #b35900 0%, #2e1100 100%)';
-            } else if(temaId === 'tema5') {
-                root.style.setProperty('--primary-yellow', '#e0b0ff');
-                root.style.setProperty('--gradient-gold', 'linear-gradient(135deg, #f3e5f5, #e0b0ff)');
-                root.style.setProperty('--glass-bg', 'rgba(59, 28, 84, 0.4)');
-                root.style.setProperty('--glass-border', 'rgba(224, 176, 255, 0.35)');
-                if(bgAnimated) bgAnimated.style.background = 'radial-gradient(circle at top right, #3b1c54 0%, #11051c 100%)';
-            }
-        };
-
         window.pilihTema = async (temaId) => {
             document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
             const cardEl = document.getElementById('card-' + temaId);
             if(cardEl) cardEl.classList.add('selected');
             
             kadData.tema = temaId;
-            window.terapkanTema(temaId);
 
             if (currentUserInfo && currentUserInfo.uid !== 'demo_user_123') {
                 try {
@@ -1241,11 +1001,11 @@
                     htmlStr += `<div class="admin-user-item"><div><strong>${data.nama || 'Tiada Nama'}</strong><br><small>${pautanText}</small></div><button class="btn-delete" onclick="padamPenggunaData('${uid}')" title="Padam Data"><i class="fa-solid fa-trash"></i></button></div>`;
                 });
                 if(totalEl) totalEl.innerText = count;
-                container.innerHTML = count > 0 ? htmlStr : '<p style="color:rgba(255,255,255,0.5);">Tiada pendaftaran setakat ini.</p>';
+                container.innerHTML = count > 0 ? htmlStr : '<p style="color:var(--text-muted-dark);">Tiada pendaftaran setakat ini.</p>';
             } catch (e) {
                 console.error("Ralat muat senarai:", e);
                 if(totalEl) totalEl.innerText = "3 (Mod Demo)";
-                container.innerHTML = `<div style="background: rgba(255, 59, 48, 0.2); border-left: 4px solid #ff3b30; padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 0.85rem;"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Akses Pangkalan Data Disekat</strong><br>Untuk memaparkan data sebenar, sila kemas kini <em>Firestore Rules</em> anda.</div><div class="admin-user-item"><div><strong>Ahmad (Demo)</strong><br><small>ID: demo_ahmad_123</small></div><button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button></div>`;
+                container.innerHTML = `<div style="background: rgba(255, 59, 48, 0.1); border-left: 4px solid #ff3b30; padding: 10px; margin-bottom: 15px; border-radius: 8px; font-size: 0.85rem;"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Akses Pangkalan Data Disekat</strong><br>Untuk memaparkan data sebenar, sila kemas kini <em>Firestore Rules</em> anda.</div><div class="admin-user-item"><div><strong>Ahmad (Demo)</strong><br><small>ID: demo_ahmad_123</small></div><button class="btn-delete" onclick="alert('Ini akaun demo sahaja.')" title="Padam Data"><i class="fa-solid fa-trash"></i></button></div>`;
             }
         }
 
@@ -1299,7 +1059,6 @@
                 let dashName = document.getElementById('dash-nama-user');
                 if(dashName) dashName.innerText = currentUserInfo.displayName + " (Mod Tempatan)";
                 kadData = { ...defaultData, nama: currentUserInfo.displayName }; 
-                window.terapkanTema(kadData.tema);
                 document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
                 let activeCard = document.getElementById('card-' + kadData.tema);
                 if(activeCard) activeCard.classList.add('selected');
@@ -1311,7 +1070,7 @@
             try {
                 paparHalaman('page-loading');
                 if (currentUserInfo && currentUserInfo.uid === 'demo_user_123') {
-                    currentUserInfo = null; kadData = null; window.terapkanTema('tema1'); 
+                    currentUserInfo = null; kadData = null; 
                     paparHalaman('page-login');
                 } else {
                     await signOut(auth);
@@ -1336,7 +1095,6 @@
                     await setDoc(docRef, kadData);
                 }
                 
-                window.terapkanTema(kadData.tema);
                 document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
                 let validThemeId = document.getElementById('card-' + kadData.tema) ? kadData.tema : 'tema1';
                 let validCard = document.getElementById('card-' + validThemeId);
@@ -1352,7 +1110,6 @@
                     dashName.innerText = currentUserInfo.displayName + " (Mod Tempatan)";
                 }
                 
-                window.terapkanTema(kadData.tema);
                 document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('selected'));
                 let validThemeId = document.getElementById('card-' + kadData.tema) ? kadData.tema : 'tema1';
                 let validCard = document.getElementById('card-' + validThemeId);
@@ -1756,7 +1513,7 @@
             if(!container) return;
             container.innerHTML = '';
             if (!kadData.ucapanList || kadData.ucapanList.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:rgba(255,255,255,0.5);">Tiada ucapan lagi.</p>';
+                container.innerHTML = '<p style="text-align:center; color:var(--text-muted-dark);">Tiada ucapan lagi.</p>';
                 return;
             }
             kadData.ucapanList.forEach((item, index) => {
@@ -1828,7 +1585,7 @@
             if(el = document.getElementById('admin-custom-url')) el.value = kadData.customUrl || '';
             
             for(let i=1; i<=5; i++) {
-                if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultData.gambarTabs[i-1];
+                if(el = document.getElementById('admin-gambar-'+i)) el.value = (kadData.gambarTabs && kadData.gambarTabs[i-1]) ? kadData.gambarTabs[i-1] : defaultTemaImages[i-1];
             }
             
             if(el = document.getElementById('admin-qr-text')) el.value = kadData.qrText || defaultData.qrText;
